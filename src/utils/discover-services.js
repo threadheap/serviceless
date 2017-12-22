@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const { containsServerlessConfig } = require('../common/utils');
 
-const discover = (basePath, list) => {
+const discover = (basePath, hash) => {
     return fs.readdir(basePath).then(files => {
         return Promise.all(
             files.map(file => {
@@ -12,11 +12,11 @@ const discover = (basePath, list) => {
 
                 return fs.lstat(filePath).then(stats => {
                     if (stats.isFile() && containsServerlessConfig(file)) {
-                        list.push(basePath);
+                        hash[basePath] = path.join(basePath, file);
                     }
 
                     if (stats.isDirectory()) {
-                        return discover(filePath, list);
+                        return discover(filePath, hash);
                     } else {
                         return Promise.resolve();
                     }
@@ -27,7 +27,7 @@ const discover = (basePath, list) => {
 };
 
 module.exports = basePath => {
-    const list = [];
+    const hash = {};
 
-    return discover(basePath, list).then(() => list);
+    return discover(basePath, hash).then(() => hash);
 };

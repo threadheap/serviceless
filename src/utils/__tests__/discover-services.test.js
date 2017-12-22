@@ -16,7 +16,7 @@ describe('discover-services', () => {
     });
 
     it('returns empty list for empty directory', () => {
-        expect(discoverServices(tmpPath)).resolves.toEqual([]);
+        expect(discoverServices(tmpPath)).resolves.toEqual({});
     });
 
     it('return list of services', () => {
@@ -34,10 +34,10 @@ describe('discover-services', () => {
                 ]);
             })
             .then(() => {
-                return expect(discoverServices(tmpPath)).resolves.toEqual([
-                    service1Path,
-                    service2Path
-                ]);
+                return expect(discoverServices(tmpPath)).resolves.toEqual({
+                    [service1Path]: path.join(service1Path, 'serverless.yml'),
+                    [service2Path]: path.join(service2Path, 'serverless.js')
+                });
             });
     });
 
@@ -56,10 +56,10 @@ describe('discover-services', () => {
                 ]);
             })
             .then(() => {
-                return expect(discoverServices(tmpPath)).resolves.toEqual([
-                    service1Path,
-                    service2Path
-                ]);
+                return expect(discoverServices(tmpPath)).resolves.toEqual({
+                    [service1Path]: path.join(service1Path, 'serverless.yml'),
+                    [service2Path]: path.join(service2Path, 'serverless.js')
+                });
             });
     });
 });
