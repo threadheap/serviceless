@@ -28,7 +28,9 @@ describe('wrap-child-process', () => {
     });
 
     it('should pipe to stdout with verbose option', () => {
-        const promise = wrap(exec('ls -l'), { verbose: true });
+        const promise = wrap(exec('ls -l'), {
+            verbose: true
+        });
 
         expect(promise).resolves.toEqual(expect.any(String));
     });
