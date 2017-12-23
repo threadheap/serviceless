@@ -3,6 +3,7 @@
 const program = require('commander');
 const { version } = require('../package.json');
 const commands = require('./commands');
+const getArgv = require('./utils/get-argv');
 
 // deploy
 program
@@ -12,7 +13,14 @@ program
     .option('-v, --verbose', 'Show serverless output')
     .description('deploy service')
     .action((service, options) => {
-        commands.deploy(service, process.cwd(), '', options);
+        const args = program.rawArgs.slice(service ? 3 : 4);
+
+        commands.deploy(
+            service,
+            process.cwd(),
+            getArgv(args, program.options),
+            options
+        );
     });
 
 program.parse(process.argv);
