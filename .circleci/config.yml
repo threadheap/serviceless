@@ -4,37 +4,6 @@
 
 version: 2
 jobs:
-    build-node-4:
-      working_directory: ~/serviceless
-      docker:
-          - image: circleci/node:4.8
-
-      steps:
-          - checkout
-          # Download and cache dependencies
-          - restore_cache:
-              keys:
-                  - v1-dependencies-{{ checksum "package-lock.json" }}
-                  # fallback to using the latest cache if no exact match is found
-                  - v1-dependencies-
-
-          - run:
-              name: install dependencies
-              command: npm install
-
-          - save_cache:
-              paths:
-                  - node_modules
-              key: v1-dependencies-{{ checksum "package.json" }}
-
-          - run:
-              name: Test
-              command: npm run test:coverage
-
-          - run:
-              name: Upload coverage report
-              command: npm run codecov
-
     build-node-6:
       working_directory: ~/serviceless
       docker:
@@ -70,5 +39,4 @@ workflows:
     version: 2
     build:
         jobs:
-            - build-node-4
             - build-node-6
