@@ -8,18 +8,25 @@ const Errors = require('../../common/errors');
 const Utils = require('../../utils');
 
 class DeployCommand {
-    constructor(args, options = {}) {
+    constructor(path, argv, options = {}) {
+        this.argv = argv;
         this.options = options;
         this.cli = new Cli();
-        this.basePath = process.cwd();
+        this.basePath = path;
         this.services = Utils.discoverServices(this.basePath);
-        this.serviceGroups = Utils.groupServices(this.services);
+    }
+
+    loadServices() {
+        return Utils.discoverServices(this.basePath).then(services => {
+            this.services = services;
+            this.serviceGroups = Utils.groupServices(this.services);
+        });
     }
 
     deploy(servicePath) {
         const sls = new Sls(servicePath);
 
-        return Utils.wrapChildProcess(sls.deploy(argv), this.options);
+        return Utils.wrapChildProcess(sls.deploy(this.argv), this.options);
     }
 
     findService(query) {
@@ -39,14 +46,22 @@ class DeployCommand {
     }
 
     exec(service) {
-        if (isEmpty(services)) {
-            return Promise.reject(new Errors.NoServerlessConfigFoundError());
-        }
+        return this.loadServices().then(() => {
+            if (isEmpty(this.services)) {
+                return Promise.reject(
+                    new Errors.NoServerlessConfigFoundError()
+                );
+            }
 
-        if (service) {
-            return this.findService().then(deploy(service));
-        } else {
-            return this.cli.selectService(this.serviceGroups).then(deploy);
-        }
+            if (service) {
+                return this.findService().then(path => this.deploy(path));
+            } else {
+                return this.cli
+                    .selectService(this.serviceGroups)
+                    .then(path => this.deploy(path));
+            }
+        });
     }
 }
+
+module.exports = DeployCommand;

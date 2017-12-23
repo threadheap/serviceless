@@ -1,11 +1,11 @@
 'use strict';
 
-const Path = require('path');
 const sh = require('shelljs');
+const Errors = require('../common/errors');
 
 class ServerlessCommand {
     constructor(path, flags = '') {
-        this.path = Path.resolve(path);
+        this.path = path;
         this.flags = flags;
     }
 
@@ -13,16 +13,20 @@ class ServerlessCommand {
         const sls = sh.which('sls');
 
         if (!sls) {
-            throw new Error('Can not find serverless executable.');
+            throw new Errors.ServerlessExecutableNotFoundError();
         }
 
-        return sls;
+        return {
+            exec: (command, ...args) =>
+                sh.exec(`sls ${command}`, {
+                    async: true,
+                    silent: true
+                })
+        };
     }
 
     exec(command) {
-        return this.__getSls().exec(`${command} ${this.flags}`, {
-            async: true
-        });
+        return this.__getSls().exec(`${command} ${this.flags}`);
     }
 
     install() {

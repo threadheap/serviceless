@@ -1,5 +1,7 @@
 'use strict';
 
+const { ServerlessCommandError } = require('../common/errors');
+
 /**
  * verbose
  * stdout
@@ -33,7 +35,7 @@ const wrap = (childProcess, params = {}) => {
 
         childProcess.on('close', code => {
             if (code !== 0) {
-                reject(new Error(`process existed with code ${code}`), log);
+                reject(new ServerlessCommandError(code, log, errorLog));
             } else {
                 resolve(log);
             }

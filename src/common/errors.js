@@ -14,19 +14,33 @@ class BaseError extends Error {
 
 class NoServerlessConfigFoundError extends Error {
     constructor() {
-        const message = 'No serverless config found';
-        super(message);
+        super('No serverless config found');
     }
 }
 
 class CantFindService extends Error {
     constructor(query) {
-        const message = `Can not find service matching query "${query}"`;
-        super(message);
+        super(`Could not find service matching query "${query}"`);
+    }
+}
+
+class ServerlessExecutableNotFoundError extends Error {
+    constructor() {
+        super('Could not find serverless executable');
+    }
+}
+
+class ServerlessCommandError extends Error {
+    constructor(code, log, errorLog) {
+        super(`Serverless existed with code ${code}`);
+        this.log = log;
+        this.errorLog = errorLog;
     }
 }
 
 module.exports = {
-    NoServicesFoundError,
-    CantFindService
+    NoServerlessConfigFoundError,
+    CantFindService,
+    ServerlessExecutableNotFoundError,
+    ServerlessCommandError
 };

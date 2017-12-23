@@ -9,18 +9,20 @@ const { getChoicesFromServices } = require('./utils');
 
 class Cli {
     selectService(services) {
-        const choices = getChoicesFromServices(services);
         return inquirer
             .prompt([
                 {
-                    type: 'autocomplete',
-                    name: 'services',
+                    type: 'list',
+                    name: 'service',
                     message: 'Select service',
-                    source: (answers, input) =>
-                        choices.filter(choice => choice.indexOf(input) > -1)
+                    choices: getChoicesFromServices(services)
                 }
             ])
-            .then(answer => answer.path);
+            .then(answer => {
+                console.log(answer);
+
+                return answer.service;
+            });
     }
 }
 

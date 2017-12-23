@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const discoverServices = require('../discover-services');
 
 describe('discover-services', () => {
-    const tmpPath = path.resolve(`.tmp-${Date.now()}`);
+    const tmpPath = `.tmp-${Date.now()}`;
 
     beforeEach(() => {
         return fs.mkdir(tmpPath);
@@ -35,8 +35,8 @@ describe('discover-services', () => {
             })
             .then(() => {
                 return expect(discoverServices(tmpPath)).resolves.toEqual({
-                    [service1Path]: path.join(service1Path, 'serverless.yml'),
-                    [service2Path]: path.join(service2Path, 'serverless.js')
+                    ['1']: path.join(service1Path, 'serverless.yml'),
+                    ['2']: path.join(service2Path, 'serverless.js')
                 });
             });
     });
@@ -57,8 +57,8 @@ describe('discover-services', () => {
             })
             .then(() => {
                 return expect(discoverServices(tmpPath)).resolves.toEqual({
-                    [service1Path]: path.join(service1Path, 'serverless.yml'),
-                    [service2Path]: path.join(service2Path, 'serverless.js')
+                    '1': path.join(service1Path, 'serverless.yml'),
+                    '1/2': path.join(service2Path, 'serverless.js')
                 });
             });
     });
