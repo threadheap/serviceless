@@ -8,6 +8,7 @@ const commands = require('./commands');
 program
     .version(version)
     .command('deploy [service]')
+    .allowUnknownOption()
     .option('-v, --verbose', 'Show serverless output')
     .description('deploy service')
     .action((service, options) => {

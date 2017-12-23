@@ -54,7 +54,9 @@ class DeployCommand {
             }
 
             if (service) {
-                return this.findService().then(path => this.deploy(path));
+                return this.findService(service).then(path =>
+                    this.deploy(path)
+                );
             } else {
                 return this.cli
                     .selectService(this.serviceGroups)
