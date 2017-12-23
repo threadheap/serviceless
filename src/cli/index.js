@@ -1,10 +1,7 @@
 'use strict';
 
 const inquirer = require('inquirer');
-inquirer.registerPrompt(
-    'autocomplete',
-    require('inquirer-autocomplete-prompt')
-);
+
 const { getChoicesFromServices } = require('./utils');
 
 class Cli {
@@ -18,11 +15,7 @@ class Cli {
                     choices: getChoicesFromServices(services)
                 }
             ])
-            .then(answer => {
-                console.log(answer);
-
-                return answer.service;
-            });
+            .then(answer => answer.service);
     }
 }
 

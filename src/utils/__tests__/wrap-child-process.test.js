@@ -20,6 +20,9 @@ describe('wrap-child-process', () => {
     it('should pipe to stdout', () => {
         const outStream = new stream.Writable();
         let log = '';
+        outStream._write = data => {
+            log += data.toString();
+        };
         const promise = wrap(exec('ls -l'), {
             stdout: outStream
         });

@@ -13,14 +13,14 @@ describe('Cli', () => {
         const cli = new Cli();
 
         it('should ask to choose service', () => {
-            mockPrompt.mockReturnValueOnce(Promise.resolve({ path: 'foo' }));
+            mockPrompt.mockReturnValueOnce(Promise.resolve({ service: 'foo' }));
 
-            expect(cli.selectService({ foo: true })).resolves.toBe('foo');
+            expect(cli.selectService({ service: 'foo' })).resolves.toBe('foo');
             expect(mockPrompt).toBeCalledWith(
                 expect.arrayContaining([
                     expect.objectContaining({
-                        type: 'checkbox',
-                        name: 'services',
+                        type: 'list',
+                        name: 'service',
                         message: 'Select service',
                         choices: expect.any(Array)
                     })
