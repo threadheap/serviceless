@@ -4,10 +4,10 @@
 
 version: 2
 jobs:
-    build:
+    build-node-4:
       working_directory: ~/serviceless
       docker:
-          - image: circleci/node:6.10.3
+          - image: circleci/node:4.4
 
       steps:
           - checkout
@@ -35,6 +35,72 @@ jobs:
               name: Upload coverage report
               command: npm run codecov
 
-          - store_artifacts:
-              path: coverage
-              prefix: coverage
+    build-node-5:
+      working_directory: ~/serviceless
+      docker:
+          - image: circleci/node:5.11
+
+      steps:
+          - checkout
+          # Download and cache dependencies
+          - restore_cache:
+              keys:
+                  - v1-dependencies-{{ checksum "package-lock.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-dependencies-
+
+          - run:
+              name: install dependencies
+              command: npm install
+
+          - save_cache:
+              paths:
+                  - node_modules
+              key: v1-dependencies-{{ checksum "package.json" }}
+
+          - run:
+              name: Test
+              command: npm run test:coverage
+
+          - run:
+              name: Upload coverage report
+              command: npm run codecov
+
+    build-node-6:
+      working_directory: ~/serviceless
+      docker:
+          - image: circleci/node:6.3
+
+      steps:
+          - checkout
+          # Download and cache dependencies
+          - restore_cache:
+              keys:
+                  - v1-dependencies-{{ checksum "package-lock.json" }}
+                  # fallback to using the latest cache if no exact match is found
+                  - v1-dependencies-
+
+          - run:
+              name: install dependencies
+              command: npm install
+
+          - save_cache:
+              paths:
+                  - node_modules
+              key: v1-dependencies-{{ checksum "package.json" }}
+
+          - run:
+              name: Test
+              command: npm run test:coverage
+
+          - run:
+              name: Upload coverage report
+              command: npm run codecov
+
+workflows:
+    version: 2
+    build:
+        jobs:
+            - build-node-4
+            - build-node-5
+            - build-node-6
