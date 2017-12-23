@@ -16,7 +16,7 @@ describe('discover-services', () => {
     });
 
     it('returns empty list for empty directory', () => {
-        expect(discoverServices(tmpPath)).resolves.toEqual({});
+        return expect(discoverServices(tmpPath)).resolves.toEqual({});
     });
 
     it('return list of services', () => {

@@ -4,8 +4,9 @@ const Path = require('path');
 const sh = require('shelljs');
 
 class ServerlessCommand {
-    constructor(path) {
+    constructor(path, flags = '') {
         this.path = Path.resolve(path);
+        this.flags = flags;
     }
 
     __getSls() {
@@ -18,58 +19,56 @@ class ServerlessCommand {
         return sls;
     }
 
-    install(flags) {
-        sh.cd(this.path);
-        return this.__getSls().exec(`install ${flags}`, { async: true });
+    exec(command) {
+        return this.__getSls().exec(`${command} ${this.flags}`, {
+            async: true
+        });
     }
 
-    create(flags) {
-        return this.__getSls().exec(`create ${flags}`, { async: true });
+    install() {
+        sh.cd(this.path);
+        return this.exec(`install`);
     }
 
-    package(flags) {
-        sh.cd(this.path);
-
-        return this.__getSls().exec(`package ${flags}`);
+    create() {
+        return this.exec(`create`);
     }
 
-    deploy(flags) {
+    package() {
         sh.cd(this.path);
 
-        return this.__getSls().exec(`deploy ${flags}`);
+        return this.exec(`package`);
     }
 
-    deployFunction(functionName, flags) {
+    deploy() {
         sh.cd(this.path);
 
-        return this.__getSls().exec(
-            `deploy function -f ${functionName} ${flags}`
-        );
+        return this.exec(`deploy`);
     }
 
-    deployList(functionNames, flags) {
+    deployFunction(functionName) {
         sh.cd(this.path);
 
-        return this.__getSls().exec(
-            `deploy list ${functionNames.join(' ')} ${flags}`
-        );
+        return this.exec(`deploy function -f ${functionName}`);
     }
 
-    invoke(functionName, flags) {
+    deployList(functionNames) {
         sh.cd(this.path);
 
-        return this.__getSls().exec(
-            `invoke function -f ${functionName} ${flags}`
-        );
+        return this.exec(`deploy list ${functionNames.join(' ')}`);
     }
 
-    invokeLocal(functionName, flags) {
+    invoke(functionName) {
         sh.cd(this.path);
 
-        return this.__getSls().exec(
-            `invoke local function -f ${functionName} ${flags}`
-        );
+        return this.exec(`invoke function -f ${functionName}`);
+    }
+
+    invokeLocal(functionName) {
+        sh.cd(this.path);
+
+        return this.exec(`invoke local function -f ${functionName}`);
     }
 }
 
-module.exports = new ServerlessCommand();
+module.exports = ServerlessCommand;

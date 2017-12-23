@@ -6,7 +6,7 @@ const isObject = require('lodash/isObject');
 const getChoicesFromServices = services => {
     const choices = [];
 
-    const getChoises = (basePath, hash) => {
+    const getChoices = (basePath, hash) => {
         if (isObject(hash)) {
             Object.keys(hash).forEach(key => {
                 const path = Path.join(basePath, key);
@@ -15,11 +15,11 @@ const getChoicesFromServices = services => {
                     path
                 });
 
-                getChoises(path, hash[key]);
+                getChoices(path, hash[key]);
             });
         }
     };
-    getChoises('', services);
+    getChoices('', services);
 
     return choices;
 };
