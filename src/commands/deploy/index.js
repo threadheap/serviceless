@@ -1,9 +1,10 @@
 'use strict';
 
+const Path = require('path');
 const isEmpty = require('lodash/isEmpty');
 const pick = require('lodash/pick');
 const Cli = require('../../cli');
-const Sls = require('../../serverless/command');
+const deployMultiple = require('../../serverless/deploy-multiple');
 const Errors = require('../../common/errors');
 const Utils = require('../../utils');
 
@@ -13,23 +14,24 @@ class DeployCommand {
         this.options = options;
         this.cli = new Cli();
         this.basePath = path;
-        this.services = Utils.discoverServices(this.basePath);
     }
 
-    loadServices() {
+    _loadServices() {
         return Utils.discoverServices(this.basePath).then(services => {
             this.services = services;
             this.serviceGroups = Utils.groupServices(this.services);
         });
     }
 
-    deploy(servicePath) {
-        const sls = new Sls(servicePath);
-
-        return Utils.wrapChildProcess(sls.deploy(this.argv), this.options);
+    _deploy(path) {
+        return deployMultiple(
+            this._normalizePath(path),
+            this.argv,
+            this.options
+        );
     }
 
-    findService(query) {
+    _findService(query) {
         const matchServices = Object.keys(this.services).filter(
             service => service.indexOf(query) > -1
         );
@@ -45,8 +47,14 @@ class DeployCommand {
         }
     }
 
+    _normalizePath(path) {
+        return Object.keys(this.services)
+            .filter(servicePath => servicePath.indexOf(path) === 0)
+            .map(path => Path.join(this.basePath, path));
+    }
+
     exec(service) {
-        return this.loadServices().then(() => {
+        return this._loadServices().then(() => {
             if (isEmpty(this.services)) {
                 return Promise.reject(
                     new Errors.NoServerlessConfigFoundError()
@@ -54,13 +62,13 @@ class DeployCommand {
             }
 
             if (service) {
-                return this.findService(service).then(path =>
-                    this.deploy(path)
+                return this._findService(service).then(path =>
+                    this._deploy(path)
                 );
             } else {
                 return this.cli
                     .selectService(this.serviceGroups)
-                    .then(path => this.deploy(path));
+                    .then(path => this._deploy(path));
             }
         });
     }
