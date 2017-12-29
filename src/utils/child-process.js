@@ -2,12 +2,16 @@
 
 const { ServerlessCommandError } = require('../common/errors');
 
+let childProcesses = [];
+
 /**
  * verbose
  * stdout
  * stderr
  */
 const wrap = (childProcess, params = {}) => {
+    childProcesses.push(childProcess);
+
     return new Promise((resolve, reject) => {
         let log = '';
         let errorLog = '';
@@ -34,6 +38,11 @@ const wrap = (childProcess, params = {}) => {
         }
 
         childProcess.on('close', code => {
+            // remove from sub-processes list
+            childProcesses = childProcesses.filter(
+                childProcessItem => childProcessItem !== childProcess
+            );
+
             if (code !== 0) {
                 reject(new ServerlessCommandError(code, log, errorLog));
             } else {
@@ -43,4 +52,10 @@ const wrap = (childProcess, params = {}) => {
     });
 };
 
-module.exports = wrap;
+const kill = () => {
+    childProcesses.map(child => {
+        child.kill();
+    });
+};
+
+module.exports = { wrap, kill };

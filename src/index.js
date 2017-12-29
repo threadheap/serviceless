@@ -4,6 +4,7 @@ const program = require('commander');
 const { version } = require('../package.json');
 const commands = require('./commands');
 const getArgv = require('./utils/get-argv');
+const { kill } = require('./utils/child-process');
 
 // deploy
 program
@@ -28,3 +29,9 @@ program
     });
 
 program.parse(process.argv);
+
+// kill all child processes on exit
+process.on('exit', kill);
+// handle kill signals
+process.on('SIGINT', () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));

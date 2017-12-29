@@ -2,14 +2,14 @@
 
 const ora = require('ora');
 const Sls = require('./command');
-const wrapChildProcess = require('../utils/wrap-child-process');
+const { wrap } = require('../utils/child-process');
 
 const deployOne = (path, flags, params) => {
     const sls = new Sls(path, flags);
     const spinner = ora(path);
     spinner.start();
 
-    return wrapChildProcess(
+    return wrap(
         sls.deploy(),
         // don't push logs to console when deploying multiple services
         Object.assign({}, params, { verbose: false })

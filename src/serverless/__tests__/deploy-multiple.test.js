@@ -3,7 +3,9 @@
 const mockWrapChildProcess = jest.fn();
 const mockSls = jest.fn();
 
-jest.mock('../../utils/wrap-child-process', () => mockWrapChildProcess);
+jest.mock('../../utils/child-process', () => ({
+    wrap: mockWrapChildProcess
+}));
 jest.mock('../command', () => mockSls);
 
 const deployMultiple = require('../deploy-multiple');
