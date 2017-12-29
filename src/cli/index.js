@@ -2,15 +2,20 @@
 
 const inquirer = require('inquirer');
 
+const { getChoicesFromServices } = require('./utils');
+
 class Cli {
-    deploy(services) {
-        inquirer.prompt([
-            {
-                type: 'checkbox',
-                name: 'services',
-                choices: []
-            }
-        ]);
+    selectService(services) {
+        return inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'service',
+                    message: 'Select service',
+                    choices: getChoicesFromServices(services)
+                }
+            ])
+            .then(answer => answer.service);
     }
 }
 
