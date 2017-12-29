@@ -11,12 +11,17 @@ const deployOne = (path, flags, params) => {
 
     return wrapChildProcess(
         sls.deploy(),
+        // don't push logs to console when deploying multiple services
         Object.assign({}, params, { verbose: false })
     )
-        .then(res => {
+        .then(log => {
             spinner.succeed();
 
-            return res;
+            if (params.verbose) {
+                console.log(log);
+            }
+
+            return log;
         })
         .catch(err => {
             spinner.fail();

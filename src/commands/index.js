@@ -7,13 +7,14 @@ module.exports = {
     deploy: (service, path, argv, options) => {
         const deploy = new Deploy(path, argv, options);
 
-        deploy.exec(service).catch((err, log) => {
-            if (!options.verbose && err instanceof ServerlessCommandError) {
-                console.log(err.log);
+        deploy.exec(service).catch(err => {
+            if (err instanceof ServerlessCommandError) {
+                console.error(err.log);
                 console.error(err.errorLog);
             } else {
-                throw err;
+                console.error(err);
             }
+            process.exit(1);
         });
     }
 };
