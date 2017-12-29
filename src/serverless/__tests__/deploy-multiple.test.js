@@ -33,7 +33,7 @@ describe('serverless deploy multiple', () => {
                 deployMultiple(['foo', 'bar', 'baz'], '', {})
             ).resolves.toBeDefined();
 
-            expect(mockWrapChildProcess).toBeCalled;
+            expect(mockWrapChildProcess).toBeCalled();
         });
     });
 
@@ -41,7 +41,7 @@ describe('serverless deploy multiple', () => {
         it('should deploy empty list', () => {
             expect(
                 deployMultiple([], '', { runInBand: true })
-            ).resolves.toBeDefined();
+            ).resolves.toBeUndefined();
         });
 
         it('should deploy list of services', () => {

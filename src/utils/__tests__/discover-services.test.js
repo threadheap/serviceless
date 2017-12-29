@@ -45,7 +45,9 @@ describe('discover-services', () => {
         const service1Path = path.join(tmpPath, '1');
         const service2Path = path.join(service1Path, '2');
 
-        return Promise.all([fs.mkdir(service1Path), fs.mkdir(service2Path)])
+        return fs
+            .mkdir(service1Path)
+            .then(() => fs.mkdir(service2Path))
             .then(() => {
                 return Promise.all([
                     fs.outputFile(
