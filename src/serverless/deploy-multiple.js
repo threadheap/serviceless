@@ -1,12 +1,27 @@
 'use strict';
 
+const ora = require('ora');
 const Sls = require('./command');
 const wrapChildProcess = require('../utils/wrap-child-process');
 
 const deployOne = (path, flags, params) => {
     const sls = new Sls(path, flags);
+    const spinner = ora(path);
+    spinner.start();
 
-    return wrapChildProcess(sls.deploy(), params);
+    return wrapChildProcess(
+        sls.deploy(),
+        Object.assign({}, params, { verbose: false })
+    )
+        .then(res => {
+            spinner.succeed();
+
+            return res;
+        })
+        .catch(err => {
+            spinner.fail();
+            return new Promise((resolve, reject) => reject(err));
+        });
 };
 
 const deployParallel = (paths, flags, params) => {
