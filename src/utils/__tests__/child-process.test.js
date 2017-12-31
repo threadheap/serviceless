@@ -2,20 +2,20 @@
 
 const { exec } = require('child_process');
 const stream = require('stream');
-const { wrap } = require('../child-process');
+const { wrap, kill } = require('../child-process');
 
 describe('child-process', () => {
     describe('wrap', () => {
         it('should wrap child process', () => {
             const promise = wrap(exec('ls -l'));
 
-            expect(promise).resolves.toEqual(expect.any(String));
+            return expect(promise).resolves.toEqual(expect.any(String));
         });
 
         it('should reject on error', () => {
             const promise = wrap(exec('blah blah'));
 
-            expect(promise).rejects.toBeDefined();
+            return expect(promise).rejects.toBeDefined();
         });
 
         it('should pipe to stdout', () => {
@@ -25,10 +25,11 @@ describe('child-process', () => {
                 log += data.toString();
             };
             const promise = wrap(exec('ls -l'), {
-                stdout: outStream
+                stdout: outStream,
+                stderr: outStream
             });
 
-            expect(promise).resolves.toEqual(expect.any(String));
+            return expect(promise).resolves.toEqual(expect.any(String));
         });
 
         it('should pipe to stdout with verbose option', () => {
@@ -36,7 +37,22 @@ describe('child-process', () => {
                 verbose: true
             });
 
-            expect(promise).resolves.toEqual(expect.any(String));
+            return expect(promise).resolves.toEqual(expect.any(String));
+        });
+    });
+
+    describe('kill', () => {
+        it('should kill child processes', () => {
+            const childProcess = {
+                kill: jest.fn(),
+                on: jest.fn()
+            };
+
+            wrap(childProcess);
+            wrap(childProcess);
+
+            kill();
+            expect(childProcess.kill).toHaveBeenCalledTimes(2);
         });
     });
 });

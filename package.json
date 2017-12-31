@@ -17,12 +17,7 @@
         "type": "git",
         "url": "git+https://github.com/8bites/serviceless.git"
     },
-    "keywords": [
-        "serverless",
-        "deploy",
-        "service",
-        "multiple"
-    ],
+    "keywords": ["serverless", "deploy", "service", "multiple"],
     "author": "Pavel Vlasov <freakycue@gmail.com>",
     "license": "MIT",
     "bugs": {
@@ -41,5 +36,9 @@
         "lodash": "^4.17.4",
         "ora": "^1.3.0",
         "shelljs": "^0.7.8"
+    },
+    "jest": {
+        "collectCoverageFrom": ["src/**.js"]
     }
 }
+

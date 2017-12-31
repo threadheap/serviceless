@@ -32,7 +32,7 @@ class ServerlessExecutableNotFoundError extends Error {
 
 class ServerlessCommandError extends Error {
     constructor(code, log, errorLog) {
-        super(`Serverless existed with code ${code}`);
+        super(`Serverless exised with code ${code}`);
         this.log = log;
         this.errorLog = errorLog;
     }
