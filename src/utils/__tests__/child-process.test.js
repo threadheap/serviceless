@@ -2,7 +2,7 @@
 
 const { exec } = require('child_process');
 const stream = require('stream');
-const { wrap } = require('../child-process');
+const { wrap, kill } = require('../child-process');
 
 describe('child-process', () => {
     describe('wrap', () => {
@@ -25,7 +25,8 @@ describe('child-process', () => {
                 log += data.toString();
             };
             const promise = wrap(exec('ls -l'), {
-                stdout: outStream
+                stdout: outStream,
+                stderr: outStream
             });
 
             expect(promise).resolves.toEqual(expect.any(String));
@@ -37,6 +38,21 @@ describe('child-process', () => {
             });
 
             expect(promise).resolves.toEqual(expect.any(String));
+        });
+    });
+
+    describe('kill', () => {
+        it('should kill child processes', () => {
+            const childProcess = {
+                on: jest.fn(),
+                kill: jest.fn()
+            };
+
+            wrap(childProcess);
+            wrap(childProcess);
+
+            kill();
+            expect(childProcess.kill).toHaveBeenCalledTimes(2);
         });
     });
 });

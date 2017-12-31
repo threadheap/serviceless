@@ -17,7 +17,12 @@
         "type": "git",
         "url": "git+https://github.com/8bites/serviceless.git"
     },
-    "keywords": ["serverless", "deploy", "service", "multiple"],
+    "keywords": [
+        "serverless",
+        "deploy",
+        "service",
+        "multiple"
+    ],
     "author": "Pavel Vlasov <freakycue@gmail.com>",
     "license": "MIT",
     "bugs": {
