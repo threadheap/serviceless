@@ -55,4 +55,19 @@ describe('child-process', () => {
             expect(childProcess.kill).toHaveBeenCalledTimes(2);
         });
     });
+
+    describe('kill', () => {
+        it('should kill child processes', () => {
+            const childProcess = {
+                on: jest.fn(),
+                kill: jest.fn()
+            };
+
+            wrap(childProcess);
+            wrap(childProcess);
+
+            kill();
+            expect(childProcess.kill).toHaveBeenCalledTimes(2);
+        });
+    });
 });
