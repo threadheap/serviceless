@@ -4,33 +4,28 @@ class BaseError extends Error {
     constructor(message) {
         super(message);
         this.name = this.constructor.name;
-        if (typeof Error.captureStackTrace === 'function') {
-            Error.captureStackTrace(this, this.constructor);
-        } else {
-            this.stack = new Error(message).stack;
-        }
     }
 }
 
-class NoServerlessConfigFoundError extends Error {
+class NoServerlessConfigFoundError extends BaseError {
     constructor() {
         super('No serverless config found');
     }
 }
 
-class CantFindService extends Error {
+class CantFindService extends BaseError {
     constructor(query) {
         super(`Could not find service matching query "${query}"`);
     }
 }
 
-class ServerlessExecutableNotFoundError extends Error {
+class ServerlessExecutableNotFoundError extends BaseError {
     constructor() {
         super('Could not find serverless executable');
     }
 }
 
-class ServerlessCommandError extends Error {
+class ServerlessCommandError extends BaseError {
     constructor(code, log, errorLog) {
         super(`Serverless exised with code ${code}`);
         this.log = log;

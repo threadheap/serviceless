@@ -4,7 +4,7 @@ const sh = require('shelljs');
 const Errors = require('../common/errors');
 
 class ServerlessCommand {
-    constructor(path, flags = '') {
+    constructor(path, flags) {
         this.path = path;
         this.flags = flags;
     }
@@ -54,12 +54,6 @@ class ServerlessCommand {
         sh.cd(this.path);
 
         return this.exec(`deploy function -f ${functionName}`);
-    }
-
-    deployList(functionNames) {
-        sh.cd(this.path);
-
-        return this.exec(`deploy list ${functionNames.join(' ')}`);
     }
 
     invoke(functionName) {

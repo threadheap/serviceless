@@ -6,10 +6,11 @@ const pick = require('lodash/pick');
 const Cli = require('../../cli');
 const deployMultiple = require('../../serverless/deploy-multiple');
 const Errors = require('../../common/errors');
-const Utils = require('../../utils');
+const discoverServices = require('../../utils/discover-services');
+const groupServices = require('../../utils/group-services');
 
 class DeployCommand {
-    constructor(path, argv, options = {}) {
+    constructor(path, argv, options) {
         this.argv = argv;
         this.options = options;
         this.cli = new Cli();
@@ -17,9 +18,9 @@ class DeployCommand {
     }
 
     _loadServices() {
-        return Utils.discoverServices(this.basePath).then(services => {
+        return discoverServices(this.basePath).then(services => {
             this.services = services;
-            this.serviceGroups = Utils.groupServices(this.services);
+            this.serviceGroups = groupServices(this.services);
         });
     }
 
@@ -42,7 +43,7 @@ class DeployCommand {
             return Promise.resolve(matchServices[1]);
         } else {
             return this.cli.selectService(
-                Utils.groupServices(pick(this.services, matchServices))
+                groupServices(pick(this.services, matchServices))
             );
         }
     }

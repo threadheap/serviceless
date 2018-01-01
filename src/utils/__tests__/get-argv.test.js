@@ -14,14 +14,14 @@ describe('getArgv', () => {
     it('should filter arguments', () => {
         expect(
             getArgv(
-                ['foo', 'bar', 'f', 'b'],
+                ['--foo', '--bar', '-f', '-b'],
                 [
                     {
-                        short: 'f',
-                        long: 'foo'
+                        short: '-f',
+                        long: '--foo'
                     }
                 ]
             )
-        ).toBe('bar b');
+        ).toBe('--bar -b');
     });
 });

@@ -18,12 +18,12 @@ program
     )
     .description('deploy service')
     .action((service, options) => {
-        const args = program.rawArgs.slice(service ? 3 : 4);
+        const args = program.rawArgs.slice(service ? 4 : 3);
 
         commands.deploy(
             service,
             process.cwd(),
-            getArgv(args, program.options),
+            getArgv(args, program.commands[0].options),
             options
         );
     });
