@@ -18,7 +18,7 @@ class ServerlessCommand {
 
         return {
             exec: (command, ...args) =>
-                sh.exec(`sls ${command}`, {
+                sh.exec(`cd ${this.path} && sls ${command}`, {
                     async: true,
                     silent: true
                 })
@@ -29,43 +29,8 @@ class ServerlessCommand {
         return this.__getSls().exec(`${command} ${this.flags}`);
     }
 
-    install() {
-        sh.cd(this.path);
-        return this.exec(`install`);
-    }
-
-    create() {
-        return this.exec(`create`);
-    }
-
-    package() {
-        sh.cd(this.path);
-
-        return this.exec(`package`);
-    }
-
     deploy() {
-        sh.cd(this.path);
-
         return this.exec(`deploy`);
-    }
-
-    deployFunction(functionName) {
-        sh.cd(this.path);
-
-        return this.exec(`deploy function -f ${functionName}`);
-    }
-
-    invoke(functionName) {
-        sh.cd(this.path);
-
-        return this.exec(`invoke function -f ${functionName}`);
-    }
-
-    invokeLocal(functionName) {
-        sh.cd(this.path);
-
-        return this.exec(`invoke local function -f ${functionName}`);
     }
 }
 

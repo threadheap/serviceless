@@ -37,55 +37,18 @@ describe('serverless commands', () => {
         it('should exec command', () => {
             sls.exec('foo');
 
-            expect(mockExec).toBeCalledWith('sls foo flags', {
+            expect(mockExec).toBeCalledWith('cd foo && sls foo flags', {
                 async: true,
                 silent: true
             });
         });
 
-        ['install', 'create', 'package', 'deploy'].forEach(command => {
-            it(`should ${command}`, () => {
-                sls[command]();
-                expect(mockExec).toBeCalledWith(`sls ${command} flags`, {
-                    async: true,
-                    silent: true
-                });
+        it(`should deploy`, () => {
+            sls.deploy();
+            expect(mockExec).toBeCalledWith('cd foo && sls deploy flags', {
+                async: true,
+                silent: true
             });
-        });
-
-        ['deployFunction', 'invoke'].forEach(command => {});
-
-        it('should invoke', () => {
-            sls.invoke('foo');
-            expect(mockExec).toBeCalledWith(
-                `sls invoke function -f foo flags`,
-                {
-                    async: true,
-                    silent: true
-                }
-            );
-        });
-
-        it('should deploy function', () => {
-            sls.deployFunction('foo');
-            expect(mockExec).toBeCalledWith(
-                `sls deploy function -f foo flags`,
-                {
-                    async: true,
-                    silent: true
-                }
-            );
-        });
-
-        it('should invoke local function', () => {
-            sls.invokeLocal('foo');
-            expect(mockExec).toBeCalledWith(
-                `sls invoke local function -f foo flags`,
-                {
-                    async: true,
-                    silent: true
-                }
-            );
         });
     });
 });
