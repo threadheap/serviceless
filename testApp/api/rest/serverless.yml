@@ -1,4 +1,4 @@
-service: foo
+service: rest-api
 provider:
     name: aws
     runtime: nodejs6.10

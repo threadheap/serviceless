@@ -15,7 +15,11 @@ class Cli {
                     choices: getChoicesFromServices(services)
                 }
             ])
-            .then(answer => answer.service);
+            .then(answer => {
+                // clear console
+                process.stdout.write('\x1B[2J\x1B[0f');
+                return answer.service;
+            });
     }
 }
 

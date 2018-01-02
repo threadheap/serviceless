@@ -1,4 +1,4 @@
-service: bar
+service: graphql-api
 provider:
     name: aws
     runtime: nodejs6.10
