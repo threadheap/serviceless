@@ -20,6 +20,23 @@ describe('Deploy command', () => {
     const argv = 'argv';
     const options = {};
 
+    describe('all', () => {
+        it('should deploy all services', () => {
+            mockDiscoverServices.mockReturnValueOnce(
+                Promise.resolve({ foo: true, bar: true })
+            );
+            const deploy = new Deploy(path, argv, options);
+
+            return deploy.exec('all').then(() => {
+                expect(mockDeployMultiple).toHaveBeenCalledWith(
+                    ['foo', 'bar'],
+                    argv,
+                    options
+                );
+            });
+        });
+    });
+
     describe('with service', () => {
         it('should reject if no services found', () => {
             mockDiscoverServices.mockReturnValueOnce(Promise.resolve({}));

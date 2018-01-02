@@ -4,22 +4,12 @@ const { ServerlessCommandError } = require('../common/errors');
 
 let childProcesses = [];
 
-/**
- * verbose
- * stdout
- * stderr
- */
 const wrap = (childProcess, params = {}) => {
     childProcesses.push(childProcess);
 
     return new Promise((resolve, reject) => {
         let log = '';
         let errorLog = '';
-
-        if (params.verbose) {
-            childProcess.stdout.pipe(process.stdout);
-            childProcess.stderr.pipe(process.stderr);
-        }
 
         childProcess.stdout.on('data', data => {
             log += data.toString();

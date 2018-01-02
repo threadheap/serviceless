@@ -31,14 +31,6 @@ describe('child-process', () => {
 
             return expect(promise).resolves.toEqual(expect.any(String));
         });
-
-        it('should pipe to stdout with verbose option', () => {
-            const promise = wrap(exec('ls -l'), {
-                verbose: true
-            });
-
-            return expect(promise).resolves.toEqual(expect.any(String));
-        });
     });
 
     describe('kill', () => {

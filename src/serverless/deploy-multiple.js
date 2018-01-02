@@ -17,15 +17,11 @@ const deployOne = (path, flags, params) => {
         .then(log => {
             spinner.succeed();
 
-            if (params.verbose) {
-                console.log(log);
-            }
-
             return log;
         })
         .catch(err => {
             spinner.fail();
-            return new Promise((resolve, reject) => reject(err));
+            return Promise.resolve(err);
         });
 };
 
@@ -35,14 +31,17 @@ const deployParallel = (paths, flags, params) => {
 
 const deployInBand = (paths, flags, params) => {
     let promise = new Promise(resolve => resolve());
+    const results = [];
 
     paths.forEach(path => {
         promise = promise.then(() => {
-            return deployOne(path, flags, params);
+            return deployOne(path, flags, params).then(result =>
+                results.push(result)
+            );
         });
     });
 
-    return promise;
+    return promise.then(() => results);
 };
 
 module.exports = (paths, flags, params) => {

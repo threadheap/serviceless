@@ -62,7 +62,13 @@ class DeployCommand {
                 );
             }
 
-            if (service) {
+            if (service === 'all') {
+                return deployMultiple(
+                    Object.keys(this.services),
+                    this.argv,
+                    this.options
+                );
+            } else if (service) {
                 return this._findService(service).then(path =>
                     this._deploy(path)
                 );

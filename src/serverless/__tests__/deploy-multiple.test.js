@@ -26,18 +26,12 @@ describe('serverless deploy multiple', () => {
 
     describe('deploy in parallel', () => {
         it('should deploy empty list', () => {
-            return expect(deployMultiple([], '', {})).resolves.toBeDefined();
+            return expect(deployMultiple([], '', {})).resolves.toEqual([]);
         });
 
         it('should deploy list of services', () => {
             return expect(
                 deployMultiple(['foo', 'bar', 'baz'], '', {})
-            ).resolves.toEqual(['log', 'log', 'log']);
-        });
-
-        it('should deploy list of services with verbose flag', () => {
-            return expect(
-                deployMultiple(['foo', 'bar', 'baz'], '', { verbose: true })
             ).resolves.toEqual(['log', 'log', 'log']);
         });
 
@@ -49,7 +43,7 @@ describe('serverless deploy multiple', () => {
 
             return expect(
                 deployMultiple(['foo', 'bar', 'baz'], '', {})
-            ).rejects.toBe(error);
+            ).resolves.toEqual([error, error, error]);
         });
     });
 
@@ -57,22 +51,13 @@ describe('serverless deploy multiple', () => {
         it('should deploy empty list', () => {
             return expect(
                 deployMultiple([], '', { runInBand: true })
-            ).resolves.toBeUndefined();
+            ).resolves.toEqual([]);
         });
 
         it('should deploy list of services', () => {
             return expect(
                 deployMultiple(['foo', 'bar', 'baz'], '', { runInBand: true })
-            ).resolves.toEqual('log');
-        });
-
-        it('should deploy list of services with verbose flag', () => {
-            return expect(
-                deployMultiple(['foo', 'bar', 'baz'], '', {
-                    runInBand: true,
-                    verbose: true
-                })
-            ).resolves.toEqual('log');
+            ).resolves.toEqual(['log', 'log', 'log']);
         });
 
         it('should catch error', () => {
@@ -83,7 +68,7 @@ describe('serverless deploy multiple', () => {
 
             return expect(
                 deployMultiple(['foo', 'bar', 'baz'], '', { runInBand: true })
-            ).rejects.toBe(error);
+            ).resolves.toEqual([error, error, error]);
         });
     });
 });
