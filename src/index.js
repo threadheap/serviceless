@@ -11,7 +11,6 @@ program
     .version(version)
     .command('deploy [service]')
     .allowUnknownOption()
-    .option('-v, --verbose', 'Show serverless output')
     .option(
         '-b, --runInBand',
         'Deploy services one by one (parallel by default)'

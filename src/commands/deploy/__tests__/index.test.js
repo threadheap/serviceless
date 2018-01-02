@@ -14,6 +14,7 @@ jest.mock('../../../utils/discover-services', () => mockDiscoverServices);
 
 const Errors = require('../../../common/errors');
 const Deploy = require('../index');
+const { Writable } = require('stream');
 
 describe('Deploy command', () => {
     const path = 'path';
@@ -22,16 +23,19 @@ describe('Deploy command', () => {
 
     describe('all', () => {
         it('should deploy all services', () => {
+            expect.assertions(1);
+
             mockDiscoverServices.mockReturnValueOnce(
                 Promise.resolve({ foo: true, bar: true })
             );
-            const deploy = new Deploy(path, argv, options);
+            const deploy = new Deploy(path, argv, options, new Writable());
 
             return deploy.exec('all').then(() => {
                 expect(mockDeployMultiple).toHaveBeenCalledWith(
                     ['foo', 'bar'],
                     argv,
-                    options
+                    options,
+                    expect.any(Writable)
                 );
             });
         });
@@ -39,8 +43,10 @@ describe('Deploy command', () => {
 
     describe('with service', () => {
         it('should reject if no services found', () => {
+            expect.assertions(1);
+
             mockDiscoverServices.mockReturnValueOnce(Promise.resolve({}));
-            const deploy = new Deploy(path, argv, options);
+            const deploy = new Deploy(path, argv, options, new Writable());
 
             return expect(deploy.exec()).rejects.toBeInstanceOf(
                 Errors.NoServerlessConfigFoundError
@@ -51,13 +57,14 @@ describe('Deploy command', () => {
             const services = { path: true };
             mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
 
-            const deploy = new Deploy(path, argv, options);
+            const deploy = new Deploy(path, argv, options, new Writable());
 
             return deploy.exec().then(() => {
                 expect(mockDeployMultiple).toHaveBeenCalledWith(
                     ['path/path'],
                     argv,
-                    options
+                    options,
+                    expect.any(Writable)
                 );
             });
         });
@@ -68,38 +75,44 @@ describe('Deploy command', () => {
             const services = { path: true };
             mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
 
-            const deploy = new Deploy(path, argv, options);
+            const deploy = new Deploy(path, argv, options, new Writable());
 
             return deploy.exec('path').then(() => {
                 expect(mockDeployMultiple).toHaveBeenCalledWith(
                     ['path/path'],
                     argv,
-                    options
+                    options,
+                    expect.any(Writable)
                 );
             });
         });
 
         it('should call selectService if more than one service found', () => {
+            expect.assertions(2);
+
             const services = { aaa: true, aab: true };
             mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
 
-            const deploy = new Deploy(path, argv, options);
+            const deploy = new Deploy(path, argv, options, new Writable());
 
             return deploy.exec('aa').then(() => {
                 expect(mockDeployMultiple).toHaveBeenCalledWith(
                     ['path/path'],
                     argv,
-                    options
+                    options,
+                    expect.any(Writable)
                 );
                 expect(mockSelectService).toHaveBeenCalledWith(services);
             });
         });
 
         it('should reject if no services found', () => {
+            expect.assertions(1);
+
             const services = { aaa: true, aab: true };
             mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
 
-            const deploy = new Deploy(path, argv, options);
+            const deploy = new Deploy(path, argv, options, new Writable());
 
             return expect(deploy.exec('zzz')).rejects.toBeInstanceOf(
                 Errors.CantFindService

@@ -34,6 +34,6 @@ module.exports = (paths, flags, params, logStream) => {
                 task: () => deployOne(path, flags, params, logStream)
             };
         }),
-        { concurent: !params.runInBand }
+        { concurrent: !params.runInBand }
     ).run();
 };

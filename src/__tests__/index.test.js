@@ -27,15 +27,7 @@ describe('index', () => {
     });
 
     describe('with kill signals', () => {
-        process.argv = [
-            'node',
-            'index.js',
-            'deploy',
-            'service',
-            '-v',
-            '-b',
-            '--foo'
-        ];
+        process.argv = ['node', 'index.js', 'deploy', 'service', '-b', '--foo'];
 
         require('../index');
         it('should handle exit events', () => {
@@ -67,7 +59,6 @@ describe('index', () => {
                 'index.js',
                 'deploy',
                 'service',
-                '-v',
                 '-b',
                 '--foo'
             ];
@@ -79,7 +70,6 @@ describe('index', () => {
                 'path',
                 '--foo',
                 expect.objectContaining({
-                    verbose: true,
                     runInBand: true
                 })
             );
@@ -90,7 +80,6 @@ describe('index', () => {
                 'node',
                 'index.js',
                 'deploy',
-                '--verbose',
                 '--runInBand',
                 '--foo'
             ];
@@ -102,7 +91,6 @@ describe('index', () => {
                 'path',
                 '--foo',
                 expect.objectContaining({
-                    verbose: true,
                     runInBand: true
                 })
             );

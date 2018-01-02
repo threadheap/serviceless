@@ -10,11 +10,12 @@ const discoverServices = require('../../utils/discover-services');
 const groupServices = require('../../utils/group-services');
 
 class DeployCommand {
-    constructor(path, argv, options) {
+    constructor(path, argv, options, logStream) {
         this.argv = argv;
         this.options = options;
         this.cli = new Cli();
         this.basePath = path;
+        this.logStream = logStream;
     }
 
     _loadServices() {
@@ -28,7 +29,8 @@ class DeployCommand {
         return deployMultiple(
             this._normalizePath(path),
             this.argv,
-            this.options
+            this.options,
+            this.logStream
         );
     }
 
@@ -66,7 +68,8 @@ class DeployCommand {
                 return deployMultiple(
                     Object.keys(this.services),
                     this.argv,
-                    this.options
+                    this.options,
+                    this.logStream
                 );
             } else if (service) {
                 return this._findService(service).then(path =>
