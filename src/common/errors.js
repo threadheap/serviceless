@@ -27,7 +27,7 @@ class ServerlessExecutableNotFoundError extends BaseError {
 
 class ServerlessCommandError extends BaseError {
     constructor(code, log, errorLog) {
-        super(`Serverless exised with code ${code}`);
+        super(`Serverless exited with code ${code}`);
         this.log = log;
         this.errorLog = errorLog;
     }

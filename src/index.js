@@ -15,6 +15,7 @@ program
         '-b, --runInBand',
         'Deploy services one by one (parallel by default)'
     )
+    .option('-e, --exitOnFailure', 'Stop deployment on failure')
     .action((service, options) => {
         const args = program.rawArgs.slice(service ? 4 : 3);
 
