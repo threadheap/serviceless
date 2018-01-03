@@ -1,0 +1,5 @@
+.circleci
+testApp
+*.log
+*__tests__*
+*.test.js

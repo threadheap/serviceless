@@ -1,12 +1,12 @@
 {
     "name": "serviceless",
-    "version": "0.0.1",
+    "version": "0.0.1-beta",
     "description": "",
     "main": "index.js",
     "bin": {
-        "serviceless": "./bin/serviceless",
-        "slx": "./bin/serviceless",
-        "slsx": "./bin/serviceless"
+        "serviceless": "./index.js",
+        "slx": "./index.js",
+        "slsx": "./index.js"
     },
     "scripts": {
         "test": "jest",
