@@ -25,11 +25,13 @@ module.exports = {
             logStream.once('open', () => {
                 deploy
                     .exec(service)
-                    .catch(() => {
-                        failed = true;
+                    .catch(err => {
+                        console.error(err);
                         console.error(
                             'sls deploy process failed, see `serviceless.log` for more information.'
                         );
+
+                        failed = true;
                         logStream.end();
                     })
                     .then(() => {

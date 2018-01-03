@@ -40,7 +40,7 @@ class DeployCommand {
         );
 
         if (matchServices.length === 0) {
-            return Promise.reject(new Errors.CantFindService());
+            return Promise.reject(new Errors.CantFindService(query));
         } else if (matchServices.length === 1) {
             return Promise.resolve(matchServices[1]);
         } else {

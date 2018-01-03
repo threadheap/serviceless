@@ -15,7 +15,6 @@ program
         '-b, --runInBand',
         'Deploy services one by one (parallel by default)'
     )
-    .description('deploy service (all to deploy the whole directory)')
     .action((service, options) => {
         const args = program.rawArgs.slice(service ? 4 : 3);
 
@@ -25,13 +24,22 @@ program
             getArgv(args, program.commands[0].options),
             options
         );
+    })
+    .on('--help', () => {
+        process.stdout.write(`
+  Examples:
+
+    deploy
+    deploy all
+    deploy path/to/app
+    `);
     });
 
-if (!process.argv.slice(2).length) {
+program.parse(process.argv);
+
+if (program.args.length === 0) {
     program.outputHelp();
 }
-
-program.parse(process.argv);
 
 // kill all child processes on exit
 process.on('exit', kill);

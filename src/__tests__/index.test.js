@@ -20,6 +20,7 @@ describe('index', () => {
 
     beforeEach(() => {
         jest.resetModules();
+        mockDeploy.mockClear();
     });
 
     afterEach(() => {
@@ -94,6 +95,27 @@ describe('index', () => {
                     runInBand: true
                 })
             );
+        });
+
+        it('should show help for deploy command', () => {
+            process.argv = ['node', 'slx', 'deploy', '--help'];
+            jest.spyOn(process.stdout, 'write');
+
+            require('../index');
+
+            expect(process.stdout.write).toHaveBeenCalled();
+        });
+    });
+
+    describe('default', () => {
+        it('should show help by default', () => {
+            process.argv = ['node', 'index.js'];
+            jest.spyOn(process.stdout, 'write');
+
+            require('../index');
+
+            expect(mockDeploy).not.toHaveBeenCalled();
+            expect(process.stdout.write).toHaveBeenCalled();
         });
     });
 });
