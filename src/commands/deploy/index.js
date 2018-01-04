@@ -51,9 +51,15 @@ class DeployCommand {
     }
 
     _normalizePath(path) {
-        return Object.keys(this.services)
-            .filter(servicePath => servicePath.indexOf(path) === 0)
-            .map(path => Path.join(this.basePath, path));
+        const services = Object.keys(this.services);
+
+        if (path === '.') {
+            return services;
+        } else {
+            return services
+                .filter(servicePath => servicePath.indexOf(path) === 0)
+                .map(path => Path.join(this.basePath, path));
+        }
     }
 
     exec(service) {

@@ -31,7 +31,8 @@ module.exports = basePath => {
 
     return discover(basePath, hash).then(() => {
         Object.keys(hash).forEach(key => {
-            hash[key.replace(basePath, '').replace(/^\//, '')] = hash[key];
+            const hashKey = key.replace(basePath, '').replace(/^\//, '') || '.';
+            hash[hashKey] = hash[key];
             delete hash[key];
         });
 

@@ -42,6 +42,7 @@ describe('discover-services', () => {
     });
 
     it('returns nested services', () => {
+        const rootServicePath = path.join(tmpPath, 'serverless.yml');
         const service1Path = path.join(tmpPath, '1');
         const service2Path = path.join(service1Path, '2');
 
@@ -50,6 +51,7 @@ describe('discover-services', () => {
             .then(() => fs.mkdir(service2Path))
             .then(() => {
                 return Promise.all([
+                    fs.outputFile(rootServicePath, ''),
                     fs.outputFile(
                         path.join(service1Path, 'serverless.yml'),
                         ''
@@ -59,6 +61,7 @@ describe('discover-services', () => {
             })
             .then(() => {
                 return expect(discoverServices(tmpPath)).resolves.toEqual({
+                    '.': rootServicePath,
                     '1': path.join(service1Path, 'serverless.yml'),
                     '1/2': path.join(service2Path, 'serverless.js')
                 });
