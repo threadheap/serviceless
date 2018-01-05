@@ -56,20 +56,22 @@ describe('groupServices', () => {
     it('should join deep nested groups', () => {
         expect(
             groupServices({
-                'service/foo/bar/baz1/blah/1': '',
-                'service/foo/bar/baz1/blah/2': '',
+                service: '',
                 'service/foo': '',
-                service: ''
+                'service/foo/bar/baz1/blah/1': '',
+                'service/foo/bar/baz1/blah/2': ''
             })
         ).toEqual({
             service: {
-                foo: true,
-                'bar/baz1/blah': {
-                    '1': true,
-                    '2': true
+                '.': true,
+                foo: {
+                    '.': true,
+                    'bar/baz1/blah': {
+                        '1': true,
+                        '2': true
+                    }
                 }
-            },
-            service: true
+            }
         });
     });
 });

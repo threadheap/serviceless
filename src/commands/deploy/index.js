@@ -25,9 +25,9 @@ class DeployCommand {
         });
     }
 
-    _deploy(path) {
+    _deploy(paths) {
         return deployMultiple(
-            this._normalizePath(path),
+            typeof paths === 'string' ? this._normalizePath(paths) : paths,
             this.argv,
             this.options,
             this.logStream
@@ -41,12 +41,8 @@ class DeployCommand {
 
         if (matchServices.length === 0) {
             return Promise.reject(new Errors.CantFindService(query));
-        } else if (matchServices.length === 1) {
-            return Promise.resolve(matchServices[1]);
         } else {
-            return this.cli.selectService(
-                groupServices(pick(this.services, matchServices))
-            );
+            return Promise.resolve(matchServices);
         }
     }
 
@@ -78,8 +74,8 @@ class DeployCommand {
                     this.logStream
                 );
             } else if (service) {
-                return this._findService(service).then(path =>
-                    this._deploy(path)
+                return this._findService(service).then(paths =>
+                    this._deploy(paths)
                 );
             } else {
                 return this.cli

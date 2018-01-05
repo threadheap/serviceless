@@ -88,30 +88,10 @@ describe('Deploy command', () => {
         });
 
         it('should call selectService if more than one service found', () => {
-            expect.assertions(2);
+            expect.assertions(1);
 
-            const services = { aaa: true, aab: true };
+            const services = { aaa: true, aab: true, zzz: true };
             mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
-
-            const deploy = new Deploy(path, argv, options, new Writable());
-
-            return deploy.exec('aa').then(() => {
-                expect(mockDeployMultiple).toHaveBeenCalledWith(
-                    ['path/path'],
-                    argv,
-                    options,
-                    expect.any(Writable)
-                );
-                expect(mockSelectService).toHaveBeenCalledWith(services);
-            });
-        });
-
-        it('should deploy all services if root is selected', () => {
-            expect.assertions(2);
-
-            const services = { aaa: true, aab: true };
-            mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
-            mockSelectService.mockReturnValueOnce(Promise.resolve('.'));
 
             const deploy = new Deploy(path, argv, options, new Writable());
 
@@ -122,7 +102,25 @@ describe('Deploy command', () => {
                     options,
                     expect.any(Writable)
                 );
-                expect(mockSelectService).toHaveBeenCalledWith(services);
+            });
+        });
+
+        it('should deploy all services if root is selected', () => {
+            expect.assertions(1);
+
+            const services = { aaa: true, aab: true, zzz: true };
+            mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
+            mockSelectService.mockReturnValueOnce(Promise.resolve('.'));
+
+            const deploy = new Deploy(path, argv, options, new Writable());
+
+            return deploy.exec().then(() => {
+                expect(mockDeployMultiple).toHaveBeenCalledWith(
+                    ['aaa', 'aab', 'zzz'],
+                    argv,
+                    options,
+                    expect.any(Writable)
+                );
             });
         });
 

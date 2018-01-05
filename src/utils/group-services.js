@@ -4,32 +4,37 @@ const isObject = require('lodash/isObject');
 const Path = require('path');
 
 const joinGroups = groups => {
-    const joinGroup = (prevPath, hash) => {
-        if (isObject(hash)) {
-            const keys = Object.keys(hash);
-            if (keys.length === 1) {
-                const newPath = Path.join(prevPath, keys[0]);
-                const newHash = hash[keys[0]];
-                delete groups[prevPath];
-                groups[newPath] = newHash;
-                return joinGroup(newPath, newHash);
-            }
-            keys.forEach(key => {
-                joinGroup(Path.join(prevPath, key), hash[key]);
-            });
+    if (typeof groups !== 'object') {
+        return;
+    }
+
+    const innerJoin = (key, groups) => {
+        const innerKeys = Object.keys(groups[key]);
+
+        if (innerKeys.length === 1) {
+            const innerKey = innerKeys[0];
+            const newKey = Path.join(key, innerKey);
+            groups[newKey] = groups[key][innerKey];
+            delete groups[key];
+
+            innerJoin(newKey, groups);
+        } else {
+            joinGroups(groups[key]);
         }
     };
 
     Object.keys(groups).forEach(key => {
-        joinGroup(key, groups[key]);
-    });
+        if (typeof groups[key] === 'object') {
+            const innerKeys = Object.keys(groups[key]);
 
-    return groups;
+            innerJoin(key, groups);
+        }
+    });
 };
 
 const groupServices = services => {
     const groups = {};
-    const paths = Object.keys(services);
+    const paths = Object.keys(services).sort();
 
     paths.forEach(path => {
         let hash = groups;
@@ -38,12 +43,18 @@ const groupServices = services => {
             if (!hash[part]) {
                 hash[part] = {};
             }
+            if (typeof hash[part] !== 'object') {
+                hash[part] = { '.': true };
+            }
             hash = hash[part];
         });
+
         hash[parts[parts.length - 1]] = true;
     });
 
-    return joinGroups(groups);
+    joinGroups(groups);
+
+    return groups;
 };
 
 module.exports = groupServices;
