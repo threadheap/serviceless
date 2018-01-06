@@ -1,18 +1,24 @@
 'use strict';
 
+const { Separator } = require('inquirer');
 const Path = require('path');
+const findIndex = require('lodash/findIndex');
 const isObject = require('lodash/isObject');
+const sortBy = require('lodash/sortBy');
 
 const getChoicesFromServices = services => {
-    const choices = [];
+    let choices = [];
 
     const getChoices = (basePath, hash) => {
         if (isObject(hash)) {
             Object.keys(hash).forEach(key => {
                 const path = Path.join(basePath, key);
+                const isService = key === '.' || typeof hash[key] !== 'object';
                 choices.push({
-                    name: path,
-                    path
+                    // prettier-ignore
+                    name: `${isService ? '(service)  ' : '(folder)   '} ${path}`,
+                    path,
+                    isService
                 });
 
                 getChoices(path, hash[key]);
@@ -21,7 +27,16 @@ const getChoicesFromServices = services => {
     };
     getChoices('', services);
 
-    return choices;
+    choices = sortBy(choices, choice => choice.isService);
+    const firstFolderIndex = findIndex(choices, choice => choice.isService);
+
+    return [
+        new Separator(),
+        ...choices.slice(0, firstFolderIndex),
+        new Separator(),
+        ...choices.slice(firstFolderIndex),
+        new Separator()
+    ];
 };
 
 module.exports = { getChoicesFromServices };

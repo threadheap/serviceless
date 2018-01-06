@@ -4,10 +4,6 @@ const isObject = require('lodash/isObject');
 const Path = require('path');
 
 const joinGroups = groups => {
-    if (typeof groups !== 'object') {
-        return;
-    }
-
     const innerJoin = (key, groups) => {
         const innerKeys = Object.keys(groups[key]);
 

@@ -11,8 +11,10 @@ class Cli {
                 {
                     type: 'list',
                     name: 'service',
-                    message: 'Select service',
-                    choices: getChoicesFromServices(services)
+                    message: 'Select service or folder to deploy',
+                    choices: getChoicesFromServices(services),
+                    prefix: '',
+                    pageSize: 20
                 }
             ])
             .then(answer => {

@@ -1,57 +1,74 @@
 'use strict';
 
+const { Separator } = require('inquirer');
 const { getChoicesFromServices } = require('../utils');
 
 describe('cli utils', () => {
     describe('getChoicesFromServices', () => {
         it('should return empty choises', () => {
-            expect(getChoicesFromServices({})).toEqual([]);
+            expect(getChoicesFromServices({})).toEqual([
+                new Separator(),
+                new Separator(),
+                new Separator()
+            ]);
         });
 
         it('should generate choises', () => {
-            expect(
-                getChoicesFromServices({
-                    service1: '',
-                    service2: ''
-                })
-            ).toEqual([
+            const choices = getChoicesFromServices({
+                service1: '',
+                service2: ''
+            });
+
+            expect(choices).toEqual([
+                new Separator(),
+                new Separator(),
                 {
-                    name: 'service1',
-                    path: 'service1'
+                    name: '(service)   service1',
+                    path: 'service1',
+                    isService: true
                 },
                 {
-                    name: 'service2',
-                    path: 'service2'
-                }
+                    name: '(service)   service2',
+                    path: 'service2',
+                    isService: true
+                },
+                new Separator()
             ]);
         });
 
         it('should generate deep nested choises', () => {
-            expect(
-                getChoicesFromServices({
-                    'service/foo/bar': {
-                        foo: '',
-                        'bar/baz': ''
-                    },
-                    'service2/baz': ''
-                })
-            ).toEqual([
+            const choices = getChoicesFromServices({
+                'service/foo/bar': {
+                    foo: '',
+                    'bar/baz': ''
+                },
+                'service2/baz': ''
+            });
+
+            expect(choices).toEqual([
+                new Separator(),
                 {
-                    name: 'service/foo/bar',
-                    path: 'service/foo/bar'
+                    name: '(folder)    service/foo/bar',
+                    path: 'service/foo/bar',
+                    isService: false
+                },
+                new Separator(),
+                {
+                    name: '(service)   service/foo/bar/foo',
+                    path: 'service/foo/bar/foo',
+                    isService: true
                 },
                 {
-                    name: 'service/foo/bar/foo',
-                    path: 'service/foo/bar/foo'
+                    name: '(service)   service/foo/bar/bar/baz',
+                    path: 'service/foo/bar/bar/baz',
+                    isService: true
                 },
                 {
-                    name: 'service/foo/bar/bar/baz',
-                    path: 'service/foo/bar/bar/baz'
+                    name: '(service)   service2/baz',
+                    path: 'service2/baz',
+                    isService: true
                 },
-                {
-                    name: 'service2/baz',
-                    path: 'service2/baz'
-                }
+                new Separator()
             ]);
         });
     });
