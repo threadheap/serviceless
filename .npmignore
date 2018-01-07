@@ -1,5 +1,6 @@
 .circleci
 testApp
+assets
 *.log
 *__tests__*
 *.test.js
