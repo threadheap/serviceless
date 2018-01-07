@@ -1,6 +1,6 @@
 {
     "name": "serviceless",
-    "version": "0.0.1-beta",
+    "version": "0.0.1",
     "description": "",
     "main": "index.js",
     "bin": {
@@ -17,12 +17,7 @@
         "type": "git",
         "url": "git+https://github.com/8bites/serviceless.git"
     },
-    "keywords": [
-        "serverless",
-        "deploy",
-        "service",
-        "multiple"
-    ],
+    "keywords": ["serverless", "deploy", "service", "multiple"],
     "author": "Pavel Vlasov <freakycue@gmail.com>",
     "license": "MIT",
     "bugs": {
@@ -43,8 +38,6 @@
         "shelljs": "^0.7.8"
     },
     "jest": {
-        "collectCoverageFrom": [
-            "src/**.js"
-        ]
+        "collectCoverageFrom": ["src/**.js"]
     }
 }
