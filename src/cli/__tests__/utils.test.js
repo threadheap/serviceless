@@ -24,12 +24,12 @@ describe('cli utils', () => {
                 new Separator(),
                 {
                     name: '(service)   service1',
-                    path: 'service1',
+                    value: 'service1',
                     isService: true
                 },
                 {
                     name: '(service)   service2',
-                    path: 'service2',
+                    value: 'service2',
                     isService: true
                 },
                 new Separator()
@@ -49,23 +49,23 @@ describe('cli utils', () => {
                 new Separator(),
                 {
                     name: '(folder)    service/foo/bar',
-                    path: 'service/foo/bar',
+                    value: 'service/foo/bar',
                     isService: false
                 },
                 new Separator(),
                 {
                     name: '(service)   service/foo/bar/foo',
-                    path: 'service/foo/bar/foo',
+                    value: 'service/foo/bar/foo',
                     isService: true
                 },
                 {
                     name: '(service)   service/foo/bar/bar/baz',
-                    path: 'service/foo/bar/bar/baz',
+                    value: 'service/foo/bar/bar/baz',
                     isService: true
                 },
                 {
                     name: '(service)   service2/baz',
-                    path: 'service2/baz',
+                    value: 'service2/baz',
                     isService: true
                 },
                 new Separator()

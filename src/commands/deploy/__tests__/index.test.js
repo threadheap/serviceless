@@ -105,6 +105,25 @@ describe('Deploy command', () => {
             });
         });
 
+        it('should deploy root service', () => {
+            expect.assertions(1);
+
+            const services = { '.': true };
+            mockDiscoverServices.mockReturnValueOnce(Promise.resolve(services));
+            mockSelectService.mockReturnValueOnce(Promise.resolve('.'));
+
+            const deploy = new Deploy(path, argv, options, new Writable());
+
+            return deploy.exec().then(() => {
+                expect(mockDeployMultiple).toHaveBeenCalledWith(
+                    ['.'],
+                    argv,
+                    options,
+                    expect.any(Writable)
+                );
+            });
+        });
+
         it('should deploy all services if root is selected', () => {
             expect.assertions(1);
 

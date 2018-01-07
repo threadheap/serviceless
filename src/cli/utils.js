@@ -17,7 +17,7 @@ const getChoicesFromServices = services => {
                 choices.push({
                     // prettier-ignore
                     name: `${isService ? '(service)  ' : '(folder)   '} ${path}`,
-                    path,
+                    value: path,
                     isService
                 });
 

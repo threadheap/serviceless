@@ -50,7 +50,7 @@ class DeployCommand {
         const services = Object.keys(this.services);
 
         if (path === '.') {
-            return services;
+            return path in this.services ? [path] : services;
         } else {
             return services
                 .filter(servicePath => servicePath.indexOf(path) === 0)
