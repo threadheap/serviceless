@@ -66,6 +66,8 @@ What's next
 
 - [ ] aggregate logs for multiple services
 - [ ] add configuration file to deploy in band services that rely on each other
+- [ ] save and restore `.serverless` folders to use as deployment artifacts for CI/CD tools 
+- [ ] git integration to show and deploy changed services
 
 Contributions
 ===
