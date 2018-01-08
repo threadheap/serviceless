@@ -64,6 +64,7 @@ slx deploy --help
 What's next
 ===
 
+- [ ] add option to rollback to previous state on fail
 - [ ] aggregate logs for multiple services
 - [ ] add configuration file to deploy in band services that rely on each other
 - [ ] save and restore `.serverless` folders to use as deployment artifacts for CI/CD tools 
