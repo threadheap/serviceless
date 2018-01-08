@@ -33,9 +33,16 @@ class ServerlessCommandError extends BaseError {
     }
 }
 
+class CanNotRollback extends BaseError {
+    constructor() {
+        super('Can not rollback service without previous versions');
+    }
+}
+
 module.exports = {
     NoServerlessConfigFoundError,
     CantFindService,
+    CanNotRollback,
     ServerlessExecutableNotFoundError,
     ServerlessCommandError
 };

@@ -16,7 +16,7 @@ describe('Cli', () => {
         it('should ask to choose service', () => {
             mockPrompt.mockReturnValueOnce(Promise.resolve({ service: 'foo' }));
 
-            expect(cli.selectService({ service: 'foo' }))
+            return expect(cli.selectService({ service: 'foo' }))
                 .resolves.toBe('foo')
                 .then(() => {
                     expect(mockPrompt).toBeCalledWith(
@@ -24,7 +24,7 @@ describe('Cli', () => {
                             expect.objectContaining({
                                 type: 'list',
                                 name: 'service',
-                                message: 'Select service',
+                                message: 'Select service or folder to deploy',
                                 choices: expect.any(Array)
                             })
                         ])

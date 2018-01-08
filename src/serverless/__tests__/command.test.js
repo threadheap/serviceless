@@ -37,15 +37,29 @@ describe('serverless commands', () => {
         it('should exec command', () => {
             sls.exec('foo');
 
-            expect(mockExec).toBeCalledWith('cd foo && sls foo flags', {
+            expect(mockExec).toBeCalledWith('cd foo && sls foo', {
                 async: true,
                 silent: true
             });
         });
 
-        it(`should deploy`, () => {
+        it('should deploy', () => {
             sls.deploy();
             expect(mockExec).toBeCalledWith('cd foo && sls deploy flags', {
+                async: true,
+                silent: true
+            });
+        });
+
+        it('should rollback', () => {
+            sls.rollback();
+
+            expect(mockExec).toBeCalledWith('cd foo && sls rollback ', {
+                async: true,
+                silent: true
+            });
+            sls.rollback('blah');
+            expect(mockExec).toBeCalledWith('cd foo && sls rollback -t blah', {
                 async: true,
                 silent: true
             });
