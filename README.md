@@ -48,6 +48,13 @@ then select service or folder from the list.
 slx deploy <query>
 ```
 
+### Deploy will cli options
+Every serverless option that you set will be propagated to the `sls deploy` command accordingly:
+```sh
+slx deploy all --stage prod --region eu-central-1
+```
+will deploy to `prod` stage and `eu-central-1` region.
+
 #### Flags
 
 `-b`, `--runInBand` - deploy services one by one (parallel by default)
