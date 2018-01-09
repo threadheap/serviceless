@@ -26,11 +26,15 @@ class ServerlessCommand {
     }
 
     exec(command) {
-        return this.__getSls().exec(`${command} ${this.flags}`);
+        return this.__getSls().exec(`${command}`);
     }
 
     deploy() {
-        return this.exec(`deploy`);
+        return this.exec(`deploy ${this.flags}`);
+    }
+
+    rollback(version) {
+        return this.exec(`rollback ${version ? `-t ${version}` : ''}`);
     }
 }
 
