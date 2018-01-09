@@ -99,4 +99,4 @@ npm test
 
 # LICENCE
 
-MIT
+MIT @ [Pavel Vlasov](https://github.com/pavelvlasov)
