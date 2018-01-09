@@ -52,7 +52,7 @@ then select service or folder from the list.
 slx deploy <query>
 ```
 
-### Deploy will cli options
+### Deploy with cli options
 
 Every serverless option that you set will be propagated to the `sls deploy` command accordingly:
 
