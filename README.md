@@ -13,13 +13,13 @@
 1. Install serverless framework
 
 ```sh
-npm install serverless
+npm install serverless -g
 ```
 
 2. Install serviceless cli
 
 ```sh
-npm install serviceless
+npm install serviceless -g
 ```
 
 3. Deploy
@@ -52,6 +52,16 @@ then select service or folder from the list.
 slx deploy <query>
 ```
 
+### Deploy will cli options
+
+Every serverless option that you set will be propagated to the `sls deploy` command accordingly:
+
+```sh
+slx deploy all --stage prod --region eu-central-1
+```
+
+will deploy to `prod` stage and `eu-central-1` region.
+
 #### Flags
 
 `-b`, `--runInBand` - deploy services one by one (parallel by default)
@@ -70,8 +80,11 @@ slx deploy --help
 
 # What's next
 
+* [ ] add option to rollback to previous state on fail
 * [ ] aggregate logs for multiple services
 * [ ] add configuration file to deploy in band services that rely on each other
+* [ ] save and restore `.serverless` folders to use as deployment artifacts for CI/CD tools
+* [ ] git integration to show and deploy changed services
 
 # Contributions
 
