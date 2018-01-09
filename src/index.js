@@ -16,6 +16,7 @@ program
         'Deploy services one by one (parallel by default)'
     )
     .option('-e, --exitOnFailure', 'Stop deployment on failure')
+    .option('-r, --rollbackOnFailure', 'Rollback deployed services on failure')
     .action((service, options) => {
         const args = program.rawArgs.slice(service ? 4 : 3);
 

@@ -32,7 +32,7 @@ describe('deployOne', () => {
                 logStream: mockStream
             })
         )
-            .resolves.toBeUndefined()
+            .resolves.toBe('log')
             .then(() => {
                 expect(mockSls).toBeCalledWith('path', 'flags');
                 expect(mockStream.write).toBeCalledWith('log');

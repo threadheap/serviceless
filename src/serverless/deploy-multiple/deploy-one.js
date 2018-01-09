@@ -14,6 +14,7 @@ const deployOne = ({ path, flags, config, logStream }) => {
     )
         .then(log => {
             logStream.write(log);
+            return log;
         })
         .catch(err => {
             if (err instanceof ServerlessCommandError) {

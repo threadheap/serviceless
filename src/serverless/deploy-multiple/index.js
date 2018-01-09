@@ -13,7 +13,14 @@ module.exports = (paths, flags, config, logStream) => {
                 title: path,
                 task: () =>
                     deployOne({ path, flags, config, logStream }).then(res => {
-                        deployedPaths.push(path);
+                        // check if service was deployed
+                        if (
+                            res.indexOf(
+                                'Serverless: Stack update finished...'
+                            ) > -1
+                        ) {
+                            deployedPaths.push(path);
+                        }
                     })
             };
         }),
@@ -25,17 +32,26 @@ module.exports = (paths, flags, config, logStream) => {
 
     if (config.rollbackOnFailure) {
         return tasks.catch(err => {
-            return new Listr(
-                deployedPaths.map(path => {
-                    return {
-                        title: `rolling back ${path}`,
-                        task: () => rollback({ path, logStream })
-                    };
-                }),
-                { concurrent: !config.runInBand, exitOnError: false }
-            )
-                .run()
-                .then(() => Promise.reject(err));
+            if (deployedPaths.length > 0) {
+                console.log('Deployment failed');
+                console.log('Rolling back');
+                return new Listr(
+                    deployedPaths.map(path => {
+                        return {
+                            title: `rolling back ${path}`,
+                            task: () => rollback({ path, logStream })
+                        };
+                    }),
+                    { concurrent: !config.runInBand, exitOnError: false }
+                )
+                    .run()
+                    .catch(err => {
+                        console.error(err);
+                    })
+                    .then(() => Promise.reject(err));
+            }
+
+            return Promise.reject(err);
         });
     }
 

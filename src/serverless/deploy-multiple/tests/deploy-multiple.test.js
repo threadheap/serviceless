@@ -108,8 +108,14 @@ describe('serverless deploy multiple', () => {
             mockDeployOne.mockImplementation(({ path }) => {
                 if (path === 'bar') {
                     return Promise.reject(error);
+                } else if (path === 'foo') {
+                    return Promise.resolve(
+                        'Serverless: Service files not changed. Skipping deployment...'
+                    );
                 } else {
-                    return Promise.resolve(path);
+                    return Promise.resolve(
+                        'Serverless: Stack update finished...'
+                    );
                 }
             });
             mockRollback.mockImplementation(() => Promise.resolve());
@@ -117,7 +123,7 @@ describe('serverless deploy multiple', () => {
             const config = { rollbackOnFailure: true };
             const services = ['foo', 'bar', 'baz'];
 
-            expect.assertions(services.length + 4);
+            expect.assertions(services.length + 3);
             return deployMultiple(services, '', config, mockStream).catch(
                 err => {
                     expect(err.errors).toHaveLength(1);
@@ -133,13 +139,96 @@ describe('serverless deploy multiple', () => {
                     });
 
                     expect(mockRollback).toBeCalledWith({
-                        path: 'foo',
+                        path: 'baz',
                         logStream: mockStream
                     });
+                }
+            );
+        });
+
+        it('should catch rollback error', () => {
+            const error = new Error('failed');
+            const rollbackError = new Error('rollback failed');
+            mockDeployOne.mockImplementation(({ path }) => {
+                if (path === 'bar') {
+                    return Promise.reject(error);
+                } else if (path === 'foo') {
+                    return Promise.resolve(
+                        'Serverless: Service files not changed. Skipping deployment...'
+                    );
+                } else {
+                    return Promise.resolve(
+                        'Serverless: Stack update finished...'
+                    );
+                }
+            });
+            mockRollback.mockImplementation(() =>
+                Promise.reject(rollbackError)
+            );
+
+            const config = { rollbackOnFailure: true };
+            const services = ['foo', 'bar', 'baz'];
+            const errorLogSpy = jest.spyOn(console, 'error');
+
+            expect.assertions(services.length + 5);
+            return deployMultiple(services, '', config, mockStream).catch(
+                err => {
+                    expect(err.errors).toHaveLength(1);
+                    expect(err.errors[0]).toBe(error);
+                    expect(errorLogSpy).toBeCalled();
+                    expect(errorLogSpy.mock.calls[0][0].errors[0]).toBe(
+                        rollbackError
+                    );
+
+                    services.forEach(service => {
+                        expect(mockDeployOne).toBeCalledWith({
+                            path: service,
+                            flags: '',
+                            config,
+                            logStream: mockStream
+                        });
+                    });
+
                     expect(mockRollback).toBeCalledWith({
                         path: 'baz',
                         logStream: mockStream
                     });
+                }
+            );
+        });
+
+        it('should reject if no paths was deployed', () => {
+            const error = new Error('failed');
+            mockDeployOne.mockImplementation(({ path }) => {
+                if (path === 'bar') {
+                    return Promise.reject(error);
+                } else {
+                    return Promise.resolve(
+                        'Serverless: Service files not changed. Skipping deployment...'
+                    );
+                }
+            });
+            mockRollback.mockImplementation(() => Promise.resolve());
+
+            const config = { rollbackOnFailure: true };
+            const services = ['foo', 'bar', 'baz'];
+
+            expect.assertions(services.length + 3);
+            return deployMultiple(services, '', config, mockStream).catch(
+                err => {
+                    expect(err.errors).toHaveLength(1);
+                    expect(err.errors[0]).toBe(error);
+
+                    services.forEach(service => {
+                        expect(mockDeployOne).toBeCalledWith({
+                            path: service,
+                            flags: '',
+                            config,
+                            logStream: mockStream
+                        });
+                    });
+
+                    expect(mockRollback).not.toBeCalled();
                 }
             );
         });
