@@ -13,11 +13,11 @@ Quick start
 
 1. Install serverless framework
 ```sh
-npm install serverless
+npm install serverless -g
 ```
 2. Install serviceless cli
 ```sh
-npm install serviceless
+npm install serviceless -g
 ```
 3. Deploy
 ```sh
