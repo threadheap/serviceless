@@ -52,7 +52,7 @@ then select service or folder from the list.
 slx deploy <query>
 ```
 
-### Deploy will cli options
+### Deploy with cli options
 
 Every serverless option that you set will be propagated to the `sls deploy` command accordingly:
 
@@ -82,7 +82,7 @@ slx deploy --help
 
 # What's next
 
-* [ ] add option to rollback to previous state on fail
+* [x] add option to rollback to previous state on fail
 * [ ] aggregate logs for multiple services
 * [ ] add configuration file to deploy in band services that rely on each other
 * [ ] save and restore `.serverless` folders to use as deployment artifacts for CI/CD tools
@@ -100,4 +100,4 @@ npm test
 
 # LICENCE
 
-MIT
+MIT @ [Pavel Vlasov](https://github.com/pavelvlasov)
