@@ -17,6 +17,7 @@ program
     )
     .option('-e, --exitOnFailure', 'Stop deployment on failure')
     .option('-r, --rollbackOnFailure', 'Rollback deployed services on failure')
+    .option('-v, --verbose', 'Show summary of serverless output')
     .action((service, options) => {
         const args = program.rawArgs.slice(service ? 4 : 3);
 

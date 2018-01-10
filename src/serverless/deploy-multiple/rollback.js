@@ -5,10 +5,10 @@ const { CanNotRollback } = require('../../common/errors');
 const { wrap } = require('../../utils/child-process');
 
 const versionRegExp = /Serverless: Timestamp: (\d+)/;
-const rollback = ({ path, logStream }) => {
+const rollback = ({ path, logStream, stdout }) => {
     const sls = new Sls(path, '');
 
-    return wrap(sls.rollback())
+    return wrap(sls.rollback(), { stdout })
         .then(log => {
             const match = log.match(versionRegExp);
 

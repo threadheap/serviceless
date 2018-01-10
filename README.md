@@ -71,6 +71,8 @@ will deploy to `prod` stage and `eu-central-1` region.
 `-r`, `--rollbackOnFailure` - rollback services on deployment failure
 Makes sense to spar with `--exitOnFailure` flag to stop on failure and rollback.
 
+`-v`, `--verbose` - show serverless output
+
 ## Help
 
 ```sh
@@ -84,7 +86,6 @@ slx deploy --help
 * [ ] aggregate logs for multiple services
 * [ ] add configuration file to deploy in band services that rely on each other
 * [ ] save and restore `.serverless` folders to use as deployment artifacts for CI/CD tools
-* [ ] git integration to show and deploy changed services
 
 # Contributions
 
