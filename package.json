@@ -21,7 +21,12 @@
         "serverless",
         "deploy",
         "service",
-        "multiple"
+        "multiple",
+        "devops",
+        "circleci",
+        "travisci",
+        "aws",
+        "aws-lambda"
     ],
     "author": "Pavel Vlasov <freakycue@gmail.com>",
     "license": "MIT",
@@ -45,8 +50,6 @@
         "shelljs": "^0.7.8"
     },
     "jest": {
-        "collectCoverageFrom": [
-            "src/**.js"
-        ]
+        "collectCoverageFrom": ["src/**.js"]
     }
 }
