@@ -7,6 +7,7 @@ jest.mock('../deploy-one', () => mockDeployOne);
 jest.mock('../rollback', () => mockRollback);
 
 const deployMultiple = require('../index');
+const { Writable } = require('stream');
 
 describe('serverless deploy multiple', () => {
     beforeEach(() => {
@@ -20,7 +21,7 @@ describe('serverless deploy multiple', () => {
         it('should deploy empty list', () => {
             return expect(
                 deployMultiple([], '', {}, mockStream)
-            ).resolves.toEqual({});
+            ).resolves.toBeUndefined();
         });
 
         it('should deploy list of services', () => {
@@ -35,8 +36,27 @@ describe('serverless deploy multiple', () => {
                     expect(mockDeployOne).toBeCalledWith({
                         path: service,
                         flags: '',
-                        config: {},
                         logStream: mockStream
+                    });
+                });
+            });
+        });
+
+        it('with verbose flag', () => {
+            mockDeployOne.mockImplementation(({ path }) =>
+                Promise.resolve(`Serverless: ${path}`)
+            );
+
+            const services = ['foo', 'bar', 'baz'];
+            const config = { verbose: true };
+            expect.assertions(services.length);
+            return deployMultiple(services, '', config, mockStream).then(() => {
+                services.forEach(service => {
+                    expect(mockDeployOne).toBeCalledWith({
+                        path: service,
+                        flags: '',
+                        logStream: mockStream,
+                        stdout: expect.any(Writable)
                     });
                 });
             });
@@ -62,7 +82,7 @@ describe('serverless deploy multiple', () => {
 
             return expect(
                 deployMultiple([], '', { runInBand: true }, mockStream)
-            ).resolves.toEqual({});
+            ).resolves.toBeUndefined();
         });
 
         it('should deploy list of services', () => {
@@ -78,8 +98,27 @@ describe('serverless deploy multiple', () => {
                     expect(mockDeployOne).toBeCalledWith({
                         path: service,
                         flags: '',
-                        config,
                         logStream: mockStream
+                    });
+                });
+            });
+        });
+
+        it('with verbose flag', () => {
+            mockDeployOne.mockImplementation(({ path }) =>
+                Promise.resolve(`Serverless: ${path}`)
+            );
+
+            const services = ['foo', 'bar', 'baz'];
+            const config = { runInBand: true, verbose: true };
+            expect.assertions(services.length);
+            return deployMultiple(services, '', config, mockStream).then(() => {
+                services.forEach(service => {
+                    expect(mockDeployOne).toBeCalledWith({
+                        path: service,
+                        flags: '',
+                        logStream: mockStream,
+                        stdout: expect.any(Writable)
                     });
                 });
             });
@@ -133,7 +172,6 @@ describe('serverless deploy multiple', () => {
                         expect(mockDeployOne).toBeCalledWith({
                             path: service,
                             flags: '',
-                            config,
                             logStream: mockStream
                         });
                     });
@@ -166,7 +204,7 @@ describe('serverless deploy multiple', () => {
                 Promise.reject(rollbackError)
             );
 
-            const config = { rollbackOnFailure: true };
+            const config = { rollbackOnFailure: true, verbose: true };
             const services = ['foo', 'bar', 'baz'];
             const errorLogSpy = jest.spyOn(console, 'error');
 
@@ -184,14 +222,15 @@ describe('serverless deploy multiple', () => {
                         expect(mockDeployOne).toBeCalledWith({
                             path: service,
                             flags: '',
-                            config,
-                            logStream: mockStream
+                            logStream: mockStream,
+                            stdout: expect.any(Writable)
                         });
                     });
 
                     expect(mockRollback).toBeCalledWith({
                         path: 'baz',
-                        logStream: mockStream
+                        logStream: mockStream,
+                        stdout: expect.any(Writable)
                     });
                 }
             );
@@ -223,7 +262,6 @@ describe('serverless deploy multiple', () => {
                         expect(mockDeployOne).toBeCalledWith({
                             path: service,
                             flags: '',
-                            config,
                             logStream: mockStream
                         });
                     });

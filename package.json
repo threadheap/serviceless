@@ -17,7 +17,17 @@
         "type": "git",
         "url": "git+https://github.com/8bites/serviceless.git"
     },
-    "keywords": ["serverless", "deploy", "service", "multiple"],
+    "keywords": [
+        "serverless",
+        "deploy",
+        "service",
+        "multiple",
+        "devops",
+        "circleci",
+        "travisci",
+        "aws",
+        "aws-lambda"
+    ],
     "author": "Pavel Vlasov <freakycue@gmail.com>",
     "license": "MIT",
     "bugs": {
@@ -34,7 +44,9 @@
         "fs-extra": "^5.0.0",
         "inquirer": "^4.0.1",
         "listr": "^0.13.0",
+        "listr-verbose-renderer": "^0.4.1",
         "lodash": "^4.17.4",
+        "log-update": "^2.3.0",
         "shelljs": "^0.7.8"
     },
     "jest": {
