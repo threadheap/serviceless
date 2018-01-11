@@ -1,6 +1,6 @@
 {
     "name": "serviceless",
-    "version": "0.0.3",
+    "version": "0.1.0",
     "description": "Cli tool on top of Serverless framework",
     "main": "index.js",
     "bin": {
