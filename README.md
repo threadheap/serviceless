@@ -62,7 +62,17 @@ slx deploy all --stage prod --region eu-central-1
 
 will deploy to `prod` stage and `eu-central-1` region.
 
-#### Flags
+### Deploy with environment variables
+
+slx will share all enviroment variables with serverless process, so
+
+```sh
+MY_SECRET=foo slx deploy all
+```
+
+will be injected into serverless config.
+
+### Deploy Flags
 
 `-b`, `--runInBand` - deploy services one by one (parallel by default)
 
