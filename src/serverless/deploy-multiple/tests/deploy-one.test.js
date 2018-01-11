@@ -35,7 +35,7 @@ describe('deployOne', () => {
             .resolves.toBe('log')
             .then(() => {
                 expect(mockSls).toBeCalledWith('path', 'flags');
-                expect(mockStream.write).toBeCalledWith('log');
+                expect(mockStream.write).toBeCalledWith('\n[path]:\nlog\n');
             });
     });
 
@@ -75,8 +75,7 @@ describe('deployOne', () => {
         )
             .rejects.toBe(error)
             .then(() => {
-                expect(mockStream.write).toBeCalledWith('log');
-                expect(mockStream.write).toBeCalledWith('errorLog');
+                expect(mockStream.write).toBeCalledWith('\n[path]:\nlog\n');
             });
     });
 });

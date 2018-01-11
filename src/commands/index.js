@@ -3,7 +3,6 @@
 const fs = require('fs');
 const Path = require('path');
 const Deploy = require('./deploy');
-const { ServerlessCommandError } = require('../common/errors');
 
 module.exports = {
     deploy: (service, path, argv, options) => {
@@ -12,7 +11,7 @@ module.exports = {
             const logStream = fs.createWriteStream(
                 Path.resolve('./serviceless.log')
             );
-            logStream.on('error', err => reject(err));
+            logStream.on('error', reject);
             const deploy = new Deploy(path, argv, options, logStream);
 
             logStream.on('finish', () => {
@@ -26,11 +25,6 @@ module.exports = {
                 deploy
                     .exec(service)
                     .catch(err => {
-                        console.error(err);
-                        console.error(
-                            'sls deploy process failed, see `serviceless.log` for more information.'
-                        );
-
                         failed = true;
                         logStream.end();
                     })
