@@ -13,13 +13,12 @@ const deployOne = ({ path, flags, logStream, stdout }) => {
         { stdout }
     )
         .then(log => {
-            logStream.write(log);
+            logStream.write(`\n[${path}]:\n${log}\n`);
             return log;
         })
         .catch(err => {
             if (err instanceof ServerlessCommandError) {
-                logStream.write(err.errorLog);
-                logStream.write(err.log);
+                logStream.write(`\n[${path}]:\n${err.log}\n`);
             }
 
             return Promise.reject(err);

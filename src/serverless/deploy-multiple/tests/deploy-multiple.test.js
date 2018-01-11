@@ -128,10 +128,14 @@ describe('serverless deploy multiple', () => {
             expect.assertions(1);
 
             const error = new Error('fail');
-            const config = { runInBand: true };
-            mockDeployOne.mockImplementation(({ path }) =>
-                Promise.reject(error)
-            );
+            const config = { runInBand: true, exitOnFailure: true };
+            mockDeployOne.mockImplementation(({ path }) => {
+                if (path === 'bar') {
+                    return Promise.reject(error);
+                } else {
+                    return Promise.resolve(`Serverless: ${path}`);
+                }
+            });
 
             return deployMultiple(['foo', 'bar', 'baz'], '', config).catch(
                 err => {

@@ -26,6 +26,31 @@ const colors = [
 
 const getColor = index => colors[index % colors.length];
 
+const getStatus = deploySummary => {
+    if (deploySummary.isSkipped) {
+        return chalk.yellow('[skipped]');
+    } else if (deploySummary.isFailed) {
+        return chalk.red('[failed]');
+    } else {
+        return chalk.green('[completed]');
+    }
+};
+
+const showSummary = (paths, ctx) => {
+    let output = '';
+    paths.forEach((path, index) => {
+        if (ctx[path]) {
+            const color = getColor(index);
+            const { info, isSkipped, isFailed } = ctx[path];
+
+            output += `${chalk[color](`[${path}]`)} ${getStatus(
+                ctx[path]
+            )}:\n${info}`;
+        }
+    });
+    logUpdate(output);
+};
+
 module.exports = (paths, flags, config, logStream) => {
     const deployedPaths = [];
 
@@ -41,27 +66,38 @@ module.exports = (paths, flags, config, logStream) => {
                         stdout:
                             config.verbose &&
                             createStatusStream(path, getColor(index), task)
-                    }).then(output => {
-                        // check if service was deployed
-                        if (
-                            output.indexOf(
-                                'Serverless: Stack update finished...'
-                            ) > -1
-                        ) {
-                            deployedPaths.push(path);
-                        } else {
-                            task.skip();
-                        }
+                    })
+                        .catch(err => {
+                            ctx[path] = {
+                                info: err.log,
+                                isFailed: true
+                            };
 
-                        const infoIndex = output.lastIndexOf(
-                            'Service Information'
-                        );
-                        const info = output.substring(infoIndex);
-                        if (config.verbose) {
-                            task.output = info;
-                        }
-                        ctx[path] = info;
-                    });
+                            return Promise.reject(err);
+                        })
+                        .then(output => {
+                            let isSkipped = false;
+                            // check if service was deployed
+                            if (
+                                output.indexOf(
+                                    'Serverless: Stack update finished...'
+                                ) > -1
+                            ) {
+                                deployedPaths.push(path);
+                            } else {
+                                isSkipped = true;
+                                task.skip();
+                            }
+
+                            const infoIndex = output.lastIndexOf(
+                                'Service Information'
+                            );
+                            const info = output.substring(infoIndex);
+                            ctx[path] = {
+                                info,
+                                isSkipped
+                            };
+                        });
                 }
             };
         }),
@@ -73,10 +109,12 @@ module.exports = (paths, flags, config, logStream) => {
         }
     ).run();
 
-    if (config.rollbackOnFailure) {
-        return tasks.catch(err => {
-            if (deployedPaths.length > 0) {
-                console.log('Deployment failed');
+    return tasks
+        .catch(err => {
+            console.log('Deployment failed');
+            showSummary(paths, err.context);
+
+            if (config.rollbackOnFailure && deployedPaths.length > 0) {
                 console.log('Rolling back');
                 return new Listr(
                     deployedPaths.map((path, index) => {
@@ -110,18 +148,9 @@ module.exports = (paths, flags, config, logStream) => {
             }
 
             return Promise.reject(err);
+        })
+        .then(ctx => {
+            console.log('\nDeployment completed successfuly\n');
+            showSummary(paths, ctx);
         });
-    }
-
-    return tasks.then(ctx => {
-        if (!config.verbose) {
-            let output = '\nDeployment completed successfuly\n';
-            paths.forEach((path, index) => {
-                const color = getColor(index);
-
-                output += `${chalk[color](`[${path}]: `)}\n${ctx[path]}`;
-            });
-            logUpdate(output);
-        }
-    });
 };

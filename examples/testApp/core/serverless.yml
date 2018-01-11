@@ -1,4 +1,4 @@
-service: core
-provider:
-    name: aws
-    runtime: nodejs6.10
+# service: core
+# provider:
+#     name: aws
+#     runtime: nodejs6.10
