@@ -75,6 +75,8 @@ will be injected into serverless config.
 
 ### Deploy Flags
 
+<img align="right" width="400" src="./assets/deploy_all_verbose.gif" />
+
 `-b`, `--runInBand` - deploy services one by one (parallel by default)
 
 `-e`, `--exitOnFailure` - stop deployment of other services on failure
