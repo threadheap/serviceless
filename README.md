@@ -2,6 +2,7 @@
 
 **Serviceless** - cli tool on top of Serverless framework, that simplifies workflow with multiple services.
 
+[![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![Build Status](http://circleci-badges-max.herokuapp.com/img/8bites/serviceless?token=4482e2625fab30eeca954eec94a73091532f7883)](https://circleci.com/gh/8bites/serviceless) [![codecov](https://codecov.io/gh/8bites/serviceless/branch/master/graph/badge.svg)](https://codecov.io/gh/8bites/serviceless)
 [![npm version](https://badge.fury.io/js/serviceless.svg)](https://badge.fury.io/js/serviceless)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
@@ -62,7 +63,17 @@ slx deploy all --stage prod --region eu-central-1
 
 will deploy to `prod` stage and `eu-central-1` region.
 
-#### Flags
+### Deploy with environment variables
+
+slx will share all enviroment variables with serverless process, so
+
+```sh
+MY_SECRET=foo slx deploy all
+```
+
+will be injected into serverless config.
+
+### Deploy Flags
 
 `-b`, `--runInBand` - deploy services one by one (parallel by default)
 
