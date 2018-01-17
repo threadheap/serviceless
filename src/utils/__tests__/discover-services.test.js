@@ -67,4 +67,17 @@ describe('discover-services', () => {
                 });
             });
     });
+
+    it('should ignore node_modules', () => {
+        const servicePath = path.join(tmpPath, 'node_modules');
+
+        return fs
+            .mkdir(servicePath)
+            .then(() =>
+                fs.outputFile(path.join(servicePath, 'serverless.yml'), '')
+            )
+            .then(() => {
+                return expect(discoverServices(tmpPath)).resolves.toEqual({});
+            });
+    });
 });

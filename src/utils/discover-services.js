@@ -4,7 +4,15 @@ const Path = require('path');
 const fs = require('fs-extra');
 const { containsServerlessConfig } = require('../common/utils');
 
+const ignorePaths = [
+    'node_modules'
+];
+
 const discover = (basePath, hash) => {
+    if (ignorePaths.some(path => basePath.indexOf(path) > -1)) {
+        return Promise.resolve();
+    }
+
     return fs.readdir(basePath).then(files => {
         return Promise.all(
             files.map(file => {
