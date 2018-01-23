@@ -1,41 +1,42 @@
 'use strict';
 
-const sh = require('shelljs');
-const Errors = require('../common/errors');
+const execa = require('execa');
+const { ServerlessExecutableNotFoundError } = require('../common/errors');
+const { wrap } = require('../utils/child-process');
+const Path = require('path');
 
-class ServerlessCommand {
-    constructor(path, flags) {
-        this.path = path;
-        this.flags = flags;
+exports = {
+    checkSls() {
+        return execa.shell('which sls').then(result => {
+            if (result === 'sls not found') {
+                return Promise.reject(new ServerlessExecutableNotFoundError());
+            }
+        });
+    },
+    deploy(path, flags, stdout) {
+        return this.checkSls().then(() => {
+            const deploy = execa.shell(
+                `cd ${Path.resolve(path)} && sls deploy ${flags}`
+            );
+            if (stdout) {
+                deploy.stdout.pipe(stdout);
+            }
+            return wrap(deploy);
+        });
+    },
+    rollback(path, version, stdout) {
+        return this.checkSls().then(() => {
+            const rollback = execa.shell(
+                `cd ${Path.resolve(path)} && sls rollback ${
+                    version ? `-t ${version}` : ''
+                }`
+            );
+            if (stdout) {
+                rollback.stdout.pipe(stdout);
+            }
+            return wrap(rollback);
+        });
     }
+};
 
-    __getSls() {
-        const sls = sh.which('sls');
-
-        if (!sls) {
-            throw new Errors.ServerlessExecutableNotFoundError();
-        }
-
-        return {
-            exec: (command, ...args) =>
-                sh.exec(`cd ${this.path} && sls ${command}`, {
-                    async: true,
-                    silent: true
-                })
-        };
-    }
-
-    exec(command) {
-        return this.__getSls().exec(`${command}`);
-    }
-
-    deploy() {
-        return this.exec(`deploy ${this.flags}`);
-    }
-
-    rollback(version) {
-        return this.exec(`rollback ${version ? `-t ${version}` : ''}`);
-    }
-}
-
-module.exports = ServerlessCommand;
+module.exports = exports;

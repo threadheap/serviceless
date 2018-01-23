@@ -2,12 +2,12 @@
 
 const logUpdate = require('log-update');
 const chalk = require('chalk');
-const lastIndexOf = require('lodash/lastIndexOf');
 const Listr = require('listr');
 const ListrVerboseRenderer = require('listr-verbose-renderer');
-const deployOne = require('./deploy-one');
-const rollback = require('./rollback');
-const createStatusStream = require('./status-stream');
+const createRollbackTask = require('./rollback');
+const createDeployTask = require('./deploy-one');
+const logger = require('../../utils/logger');
+const { wireHooks } = require('./utils');
 
 const colors = [
     'green',
@@ -31,76 +31,53 @@ const getStatus = deploySummary => {
         return chalk.yellow('[skipped]');
     } else if (deploySummary.isFailed) {
         return chalk.red('[failed]');
-    } else {
-        return chalk.green('[completed]');
     }
+    return chalk.green('[completed]');
 };
 
 const showSummary = (paths, ctx) => {
-    let output = '';
+    let output = '\n';
     paths.forEach((path, index) => {
         if (ctx[path]) {
             const color = getColor(index);
-            const { info, isSkipped, isFailed } = ctx[path];
+            const { info } = ctx[path];
 
             output += `${chalk[color](`[${path}]`)} ${getStatus(
                 ctx[path]
-            )}:\n${info}`;
+            )}:\n${info}\n`;
         }
     });
     logUpdate(output);
 };
 
-module.exports = (paths, flags, config, logStream) => {
-    const deployedPaths = [];
+module.exports = (paths, flags, config, logStream, hooks) => {
+    const rootContext = {};
+    const hookParams = {
+        flags,
+        config,
+        logStream
+    };
 
     const tasks = new Listr(
-        paths.map((path, index) => {
-            return {
+        wireHooks(
+            hookParams,
+            rootContext,
+            paths.map((path, index) => ({
                 title: path,
-                task: (ctx, task) => {
-                    return deployOne({
+                task: createDeployTask(
+                    {
                         path,
                         flags,
+                        config,
                         logStream,
-                        stdout:
-                            config.verbose &&
-                            createStatusStream(path, getColor(index), task)
-                    })
-                        .catch(err => {
-                            ctx[path] = {
-                                info: err.log,
-                                isFailed: true
-                            };
-
-                            return Promise.reject(err);
-                        })
-                        .then(output => {
-                            let isSkipped = false;
-                            // check if service was deployed
-                            if (
-                                output.indexOf(
-                                    'Serverless: Stack update finished...'
-                                ) > -1
-                            ) {
-                                deployedPaths.push(path);
-                            } else {
-                                isSkipped = true;
-                                task.skip();
-                            }
-
-                            const infoIndex = output.lastIndexOf(
-                                'Service Information'
-                            );
-                            const info = output.substring(infoIndex);
-                            ctx[path] = {
-                                info,
-                                isSkipped
-                            };
-                        });
-                }
-            };
-        }),
+                        color: getColor(index)
+                    },
+                    hooks
+                )
+            })),
+            hooks.beforeDeployAll,
+            hooks.afterDeployAll
+        ),
         {
             concurrent: !config.runInBand,
             exitOnError: Boolean(config.exitOnFailure),
@@ -110,30 +87,40 @@ module.exports = (paths, flags, config, logStream) => {
     ).run();
 
     return tasks
+        .then(ctx => {
+            logger.log('Deployment completed successfuly');
+            showSummary(paths, ctx);
+        })
         .catch(err => {
-            console.log('Deployment failed');
+            logger.log('Deployment failed');
             showSummary(paths, err.context);
 
-            if (config.rollbackOnFailure && deployedPaths.length > 0) {
-                console.log('Rolling back');
+            const { deployedPaths } = err.context;
+
+            if (
+                config.rollbackOnFailure &&
+                deployedPaths &&
+                deployedPaths.length > 0
+            ) {
+                logger.log('Rolling back');
                 return new Listr(
-                    deployedPaths.map((path, index) => {
-                        return {
+                    wireHooks(
+                        hookParams,
+                        rootContext,
+                        deployedPaths.map((path, index) => ({
                             title: `rolling back ${path}`,
-                            task: (ctx, task) =>
-                                rollback({
+                            task: createRollbackTask(
+                                {
                                     path,
                                     logStream,
-                                    stdout:
-                                        config.verbose &&
-                                        createStatusStream(
-                                            path,
-                                            getColor(index),
-                                            task
-                                        )
-                                })
-                        };
-                    }),
+                                    color: getColor(index)
+                                },
+                                hooks
+                            )
+                        })),
+                        hooks.beforeRollbackAll,
+                        hooks.afterRollbackAll
+                    ),
                     {
                         concurrent: !config.runInBand,
                         exitOnError: false,
@@ -142,15 +129,11 @@ module.exports = (paths, flags, config, logStream) => {
                 )
                     .run()
                     .catch(err => {
-                        console.error(err);
+                        logger.error(err);
                     })
                     .then(() => Promise.reject(err));
             }
 
             return Promise.reject(err);
-        })
-        .then(ctx => {
-            console.log('\nDeployment completed successfuly\n');
-            showSummary(paths, ctx);
         });
 };

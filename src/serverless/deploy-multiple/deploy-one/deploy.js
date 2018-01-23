@@ -1,17 +1,12 @@
 'use strict';
 
-const Sls = require('../command');
-const { ServerlessCommandError } = require('../../common/errors');
-const { wrap } = require('../../utils/child-process');
+const Sls = require('../../command');
+const { ServerlessCommandError } = require('../../../common/errors');
 
 const deployOne = ({ path, flags, logStream, stdout }) => {
-    const sls = new Sls(path, flags);
+    const deploy = Sls.deploy(path, flags, stdout);
 
-    return wrap(
-        sls.deploy(),
-        // don't push logs to console when deploying multiple services
-        { stdout }
-    )
+    return deploy
         .then(log => {
             logStream.write(`\n[${path}]:\n${log}\n`);
             return log;

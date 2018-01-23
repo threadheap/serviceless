@@ -1,43 +1,35 @@
 'use strict';
 
 const Path = require('path');
-const fs = require('fs-extra');
-const { containsServerlessConfig } = require('../common/utils');
+const glob = require('glob');
 
-const ignorePaths = [
-    'node_modules'
-];
+const serverlessConfigRegExp = /\/serverless\.(yaml|yml|json|js)$/;
+const ignorePaths = ['node_modules'];
 
-const discover = (basePath, hash) => {
-    if (ignorePaths.some(path => basePath.indexOf(path) > -1)) {
-        return Promise.resolve();
-    }
+const discover = basePath =>
+    new Promise((resolve, reject) => {
+        glob(
+            Path.join(basePath, '**/serverless.@(yaml|yml|json|js)'),
+            (err, files) => {
+                const hash = {};
 
-    return fs.readdir(basePath).then(files => {
-        return Promise.all(
-            files.map(file => {
-                const filePath = Path.join(basePath, file);
-
-                return fs.lstat(filePath).then(stats => {
-                    if (stats.isFile() && containsServerlessConfig(file)) {
-                        hash[basePath] = Path.join(basePath, file);
+                if (err) {
+                    reject(err);
+                }
+                files.forEach(file => {
+                    if (ignorePaths.some(path => file.indexOf(path) > -1)) {
+                        return;
                     }
-
-                    if (stats.isDirectory()) {
-                        return discover(filePath, hash);
-                    } else {
-                        return Promise.resolve();
-                    }
+                    hash[file.replace(serverlessConfigRegExp, '')] = file;
                 });
-            })
+
+                resolve(hash);
+            }
         );
     });
-};
 
-module.exports = basePath => {
-    const hash = {};
-
-    return discover(basePath, hash).then(() => {
+module.exports = basePath =>
+    discover(basePath).then(hash => {
         Object.keys(hash).forEach(key => {
             const hashKey = key.replace(basePath, '').replace(/^\//, '') || '.';
             hash[hashKey] = hash[key];
@@ -46,4 +38,3 @@ module.exports = basePath => {
 
         return hash;
     });
-};
