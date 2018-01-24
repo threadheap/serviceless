@@ -130,8 +130,8 @@ module.exports = (paths, flags, config, logStream, hooks) => {
                     .run()
                     .catch(err => {
                         logger.error(err);
-                        return Promise.reject(deployError);
-                    });
+                    })
+                    .then(() => Promise.reject(deployError));
             }
 
             return Promise.reject(deployError);
