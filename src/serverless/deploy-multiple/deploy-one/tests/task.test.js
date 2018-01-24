@@ -127,7 +127,7 @@ describe('createDeployTask', () => {
     describe('with failed deploy', () => {
         it('should catch error', () => {
             const err = new Error();
-            err.log = 'Failed';
+            err.stdout = 'Serverless Error';
             mockDeploy.mockReturnValueOnce(Promise.reject(err));
 
             const params = {
@@ -144,8 +144,8 @@ describe('createDeployTask', () => {
                 .rejects.toBe(err)
                 .then(() => {
                     expect(globalCtx.path).toEqual({
-                        stdout: err.log,
-                        info: err.log,
+                        stdout: err.stdout,
+                        info: err.stdout,
                         isFailed: true,
                         isSucceeded: false,
                         isSkipped: false

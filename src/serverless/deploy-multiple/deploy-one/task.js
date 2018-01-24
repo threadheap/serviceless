@@ -15,8 +15,8 @@ module.exports = (globalCtx, { path, flags, config, logStream, color }) => (
     })
         .catch(err => {
             const deployContext = {
-                stdout: err.log,
-                info: err.log,
+                stdout: err.stdout,
+                info: err.stdout.slice(err.stdout.indexOf('Serverless Error')),
                 isFailed: true,
                 isSkipped: false,
                 isSucceeded: false

@@ -27,11 +27,10 @@ describe('serverless deploy multiple', () => {
     const mockStream = jest.fn();
 
     describe('deploy in parallel', () => {
-        it('should deploy empty list', () => {
-            return expect(
+        it('should deploy empty list', () =>
+            expect(
                 deployMultiple([], '', {}, mockStream, {})
-            ).resolves.toBeUndefined();
-        });
+            ).resolves.toBeUndefined());
 
         it('should deploy list of services', () => {
             mockDeployOne.mockImplementation(({ path }) => ctx => {
@@ -206,6 +205,7 @@ describe('serverless deploy multiple', () => {
     describe('deploy with rollback', () => {
         it('should rollback deployed services on failure', () => {
             const error = new Error('failed');
+            error.stdout = 'Serverless Error';
             mockDeployOne.mockImplementation(({ path }) => ctx => {
                 if (path === 'bar') {
                     ctx[path] = { isFailed: true };

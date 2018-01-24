@@ -91,11 +91,11 @@ module.exports = (paths, flags, config, logStream, hooks) => {
             logger.log('Deployment completed successfuly');
             showSummary(paths, ctx);
         })
-        .catch(err => {
+        .catch(deployError => {
             logger.log('Deployment failed');
-            showSummary(paths, err.context);
+            showSummary(paths, deployError.context);
 
-            const { deployedPaths } = err.context;
+            const { deployedPaths } = deployError.context;
 
             if (
                 config.rollbackOnFailure &&
@@ -131,9 +131,9 @@ module.exports = (paths, flags, config, logStream, hooks) => {
                     .catch(err => {
                         logger.error(err);
                     })
-                    .then(() => Promise.reject(err));
+                    .then(() => Promise.reject(deployError));
             }
 
-            return Promise.reject(err);
+            return Promise.reject(deployError);
         });
 };

@@ -1,5 +1,6 @@
 'use strict';
 
+const { noop } = require('lodash');
 const program = require('commander');
 const { version } = require('../package.json');
 const commands = require('./commands');
@@ -49,3 +50,6 @@ process.on('exit', kill);
 // handle kill signals
 process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
+
+/* istanbul ignore next */
+process.on('unhandledRejection', noop);
