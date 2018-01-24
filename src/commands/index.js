@@ -26,7 +26,6 @@ module.exports = {
                 deploy
                     .exec(service)
                     .catch(err => {
-                        logger.error(err);
                         failed = true;
                         logStream.end();
                     })
