@@ -1,3 +1,6 @@
+# [DEPRECATED]
+[serverless-components](https://github.com/serverless/components) solve the problem
+
 # serviceless
 
 **Serviceless** - cli tool on top of Serverless framework, that simplifies workflow with multiple services.
